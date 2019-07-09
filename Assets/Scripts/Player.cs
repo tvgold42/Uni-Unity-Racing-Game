@@ -72,13 +72,21 @@ public class Player : MonoBehaviour
             playerRB.velocity = new Vector3(playerRB.velocity.x, playerRB.velocity.y - Time.deltaTime * 10, playerRB.velocity.z);
         }
 
-        if (Input.GetAxis("Horizontal") < -0.5 || Input.GetKey("left"))
+        if (Input.GetKey("left"))
         {
-            angle += Time.deltaTime * 250;
+            angle += Time.deltaTime * 75 + (h * 1.5f);
         }
-        if (Input.GetAxis("Horizontal") > 0.5 || Input.GetKey("right"))
+        if (Input.GetAxis("Horizontal") < -0.3)
         {
-            angle -= Time.deltaTime * 250;
+            angle += Time.deltaTime * 125 + (Input.GetAxis("Horizontal") * -5);
+        }
+        if (Input.GetKey("right"))
+        {
+            angle -= Time.deltaTime * 75 - (h * 1.5f);
+        }
+        if (Input.GetAxis("Horizontal") > 0.3)
+        {
+            angle -= Time.deltaTime * 125 - (Input.GetAxis("Horizontal") * -5);
         }
         if (Input.GetAxis("Vertical") != 0 )
         {

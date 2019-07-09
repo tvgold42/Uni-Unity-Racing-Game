@@ -21,16 +21,16 @@ public class VehicleTrail : MonoBehaviour
         speedX = vehicle.GetComponent<Player>().playerRB.velocity.x;
         speedZ = vehicle.GetComponent<Player>().playerRB.velocity.z;
 
-        if ((speedX >= 30 || speedX <= -30) || Input.GetAxis("Horizontal") >= 0.5f || Input.GetAxis("Horizontal") <= -0.5f)
+        if ((speedX >= 15 || speedX <= -15) || Input.GetAxis("Horizontal") >= 0.5f || Input.GetAxis("Horizontal") <= -0.5f)
         {
             playerTrail.emitting = true;
         }
 
-        if ((speedZ >= 30 || speedZ <= -30) || Input.GetAxis("Horizontal") >= 0.5f || Input.GetAxis("Horizontal") <= -0.5f)
+        if ((speedZ >= 15 || speedZ <= -15) || Input.GetAxis("Horizontal") >= 0.5f || Input.GetAxis("Horizontal") <= -0.5f)
         {
             playerTrail.emitting = true;
         }
-        if (speedZ <= 25 && speedZ >= -25 && speedX <= 25 && speedX >= -25 && ( Input.GetAxis("Horizontal") <= 0.5f && Input.GetAxis("Horizontal") >= -0.5f) )
+        if (speedZ <= 15 && speedZ >= -15 && speedX <= 15 && speedX >= -15 && ( Input.GetAxis("Horizontal") <= 0.5f && Input.GetAxis("Horizontal") >= -0.5f) )
         {
             playerTrail.emitting = false;
         }

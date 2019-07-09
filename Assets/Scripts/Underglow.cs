@@ -24,6 +24,6 @@ public class Underglow : MonoBehaviour
         {
             speed *= -1;
         }
-        underLight.intensity = speed;
+        underLight.intensity = speed / 2;
     }
 }
