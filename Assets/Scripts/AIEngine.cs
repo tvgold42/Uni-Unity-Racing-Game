@@ -7,7 +7,7 @@ public class AIEngine : MonoBehaviour
 
     public Transform AIPath;
     public Transform AIPos;
-    public Rigidbody AIRB;
+    public  Rigidbody AIRB;
     public WheelCollider AIWheel;
     public WheelCollider AIWheel2;
     public float maxSteerAngle = 40f;
@@ -16,6 +16,8 @@ public class AIEngine : MonoBehaviour
     public float newSteerAngle;
     public float angle;
     public float initialSize;
+    public float xVelocity;
+    public float zVelocity;
 
     public GameObject boostEffect;
     public GameObject landEffect;
@@ -53,6 +55,9 @@ public class AIEngine : MonoBehaviour
         Drive();
         CheckNodeDistance();
 
+        xVelocity = AIRB.velocity.x;
+        zVelocity = AIRB.velocity.z;
+
         //sprite size increase
         if (AIPos.localScale.x <= initialSize)
         {
@@ -72,6 +77,7 @@ public class AIEngine : MonoBehaviour
         }
 
         //speedcaps
+        /*
         if (AIRB.velocity.x >= topSpeed)
         {
             AIRB.velocity = new Vector3(topSpeed - Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z);
@@ -91,6 +97,23 @@ public class AIEngine : MonoBehaviour
         {
             AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, -topSpeed + Time.deltaTime);
             if (AIRB.velocity.z <= -60) { AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y,  - 60 + Time.deltaTime); }
+        }
+        */
+        if (AIRB.velocity.x >= topSpeed)
+        {
+            AIRB.velocity = new Vector3(topSpeed - Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z);
+        }
+        if (AIRB.velocity.z >= topSpeed)
+        {
+            AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, topSpeed - Time.deltaTime);
+        }
+        if (AIRB.velocity.x <= -topSpeed)
+        {
+            AIRB.velocity = new Vector3(-topSpeed + Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z);
+        }
+        if (AIRB.velocity.z <= -topSpeed)
+        {
+            AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, -topSpeed + Time.deltaTime);
         }
 
     }
@@ -115,7 +138,10 @@ public class AIEngine : MonoBehaviour
     }
     private void Drive()
     {
-        AIRB.AddForce(transform.up *  accel);
+        if (RaceHandler.raceStarted == true)
+        {
+            AIRB.AddForce(transform.up * accel);
+        }
     }
 
     //turning towards checkpoints
@@ -140,11 +166,33 @@ public class AIEngine : MonoBehaviour
         if (other.gameObject.tag == "BoostPad")
         {
             Debug.Log("BoostPad");
-            AIRB.AddForce(transform.up * topSpeed * 20f);
+            AIRB.AddForce(transform.up * 500 * 20f);
             Instantiate(boostEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), transform.rotation);
 
         }
 
 
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+
+        //colliding with other vehicle
+        if (other.gameObject.tag == "Vehicle")
+        {
+            other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
+            //poomf effect
+            Debug.Log("Collision with vehicle " + other.gameObject.name);
+            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+
+        }
+        if (other.gameObject.tag == "Player")
+        {
+            other.gameObject.GetComponent<Player>().playerRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
+            //poomf effect
+            Debug.Log("Collision with player");
+            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+
+        }
     }
 }

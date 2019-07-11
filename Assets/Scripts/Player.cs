@@ -7,6 +7,9 @@ public class Player : MonoBehaviour
     public Transform playerPos;
     public Rigidbody playerRB;
     public BoxCollider playerCol;
+    public AudioSource playerSound;
+    public AudioClip boostSound;
+    public AudioClip tussleSound;
     public float accel;
     public float steer;
     public float angle;
@@ -15,6 +18,9 @@ public class Player : MonoBehaviour
     public float brake;
     public static float playerX;
     public static float playerZ;
+
+    public float xVelocity;
+    public float zVelocity;
 
     public float initialSize;
 
@@ -31,6 +37,7 @@ public class Player : MonoBehaviour
         playerPos = GetComponent<Transform>();
         playerRB = GetComponent<Rigidbody>();
         playerCol = GetComponent<BoxCollider>();
+        playerSound = GetComponent<AudioSource>();
         initialSize = transform.localScale.x;
         
         
@@ -41,6 +48,8 @@ public class Player : MonoBehaviour
     {
         playerX = gameObject.transform.position.x;
         playerZ = gameObject.transform.position.z;
+        xVelocity = playerRB.velocity.x;
+        zVelocity = playerRB.velocity.z;
 
 
         float h = -Input.GetAxis("Horizontal");
@@ -72,30 +81,33 @@ public class Player : MonoBehaviour
             playerRB.velocity = new Vector3(playerRB.velocity.x, playerRB.velocity.y - Time.deltaTime * 10, playerRB.velocity.z);
         }
 
-        if (Input.GetKey("left"))
+        //disable controls if race hasnt started
+        if (RaceHandler.raceStarted == true)
         {
-            angle += Time.deltaTime * 75 + (h * 1.5f);
-        }
-        if (Input.GetAxis("Horizontal") < -0.3)
-        {
-            angle += Time.deltaTime * 125 + (Input.GetAxis("Horizontal") * -5);
-        }
-        if (Input.GetKey("right"))
-        {
-            angle -= Time.deltaTime * 75 - (h * 1.5f);
-        }
-        if (Input.GetAxis("Horizontal") > 0.3)
-        {
-            angle -= Time.deltaTime * 125 - (Input.GetAxis("Horizontal") * -5);
-        }
-        if (Input.GetAxis("Vertical") != 0 )
-        {
-            playerRB.AddForce(transform.up * (v * accel));
-        }
-        if (accelerate != 0)
-        {
-            playerRB.AddForce(transform.up * (accelerate * accel));
-
+            if (Input.GetKey("left"))
+            {
+                angle += Time.deltaTime * 75 + (h * 1.5f);
+            }
+            if (Input.GetAxis("Horizontal") < -0.3)
+            {
+                angle += Time.deltaTime * 125 + (Input.GetAxis("Horizontal") * -5);
+            }
+            if (Input.GetKey("right"))
+            {
+                angle -= Time.deltaTime * 75 - (h * 1.5f);
+            }
+            if (Input.GetAxis("Horizontal") > 0.3)
+            {
+                angle -= Time.deltaTime * 125 - (Input.GetAxis("Horizontal") * -5);
+            }
+            if (Input.GetAxis("Vertical") != 0)
+            {
+                playerRB.AddForce(transform.up * (v * accel));
+            }
+            if (accelerate != 0)
+            {
+                playerRB.AddForce(transform.up * (accelerate * accel));
+            }
         }
    
 
@@ -126,11 +138,14 @@ public class Player : MonoBehaviour
         if (other.gameObject.tag == "BoostPad" )
         {
             Debug.Log("BoostPad");
-            playerRB.AddForce(transform.up * topSpeed * 20f);
+            playerRB.AddForce(transform.up * 500 * 20f);
             Instantiate(boostEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), transform.rotation);
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 0.5f;
             CameraMovement.shake_decay = 0.005f;
+            //change volume accordingly
+            playerSound.volume = 0.2f;
+            playerSound.PlayOneShot(boostSound, 1f);
 
         }
 
@@ -142,8 +157,22 @@ public class Player : MonoBehaviour
         {
             //poomf effect
             Debug.Log("poomf");
-            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+          //  Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
 
+            CameraMovement.originPosition = transform.position;
+            CameraMovement.shake_intensity = 0.3f;
+            CameraMovement.shake_decay = 0.005f;
+        }
+
+        //colliding with other vehicle
+        if (other.gameObject.tag == "Vehicle")
+        {
+            other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f,1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
+            //poomf effect
+            Debug.Log("Collision with vehicle " + other.gameObject.name);
+            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+            playerSound.volume = 0.2f;
+            playerSound.PlayOneShot(tussleSound, 1f);
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 0.3f;
             CameraMovement.shake_decay = 0.005f;

@@ -10,6 +10,9 @@ public class MenuSelection : MonoBehaviour
     public Transform button2;
     public Transform button3;
     public Transform fadeOut;
+    public AudioSource buttonAudio;
+    public AudioClip buttonMove;
+    public AudioClip buttonSelect;
     public int maxButton;
     public int minButton;
     public int activeButton = 1;
@@ -22,7 +25,7 @@ public class MenuSelection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        buttonAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -35,11 +38,13 @@ public class MenuSelection : MonoBehaviour
         {
             activeButton += 1;
             buttonPressed = true;
+            buttonAudio.PlayOneShot(buttonMove, 1f);
         }
         if (Input.GetAxis("Vertical") >= 0.1f && activeButton > minButton && buttonPressed == false)
         {
             activeButton -= 1;
             buttonPressed = true;
+            buttonAudio.PlayOneShot(buttonMove, 1f);
         }
         //detect release of button so that holding a button down doesnt make the cursor go straight to the bottom/top
         if (Input.GetAxis("Vertical") >= -0.1f && Input.GetAxis("Vertical") <= 0.1f)
@@ -59,6 +64,7 @@ public class MenuSelection : MonoBehaviour
             Debug.Log("entered");
             selected = true;
             Instantiate(fadeOut, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), transform.rotation);
+            buttonAudio.PlayOneShot(buttonSelect, 1f);
         }
 
         //proceeding to relavent scene
