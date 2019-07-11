@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     public float topSpeed;
     public float accelerate;
     public float brake;
+    public float collideBoostTimer;
     public static float playerX;
     public static float playerZ;
 
@@ -50,6 +51,12 @@ public class Player : MonoBehaviour
         playerZ = gameObject.transform.position.z;
         xVelocity = playerRB.velocity.x;
         zVelocity = playerRB.velocity.z;
+
+        //make it so the vehicle cant spam boost collide with other
+        if (collideBoostTimer > 0)
+        {
+            collideBoostTimer -= Time.deltaTime;
+        }
 
 
         float h = -Input.GetAxis("Horizontal");
@@ -165,7 +172,7 @@ public class Player : MonoBehaviour
         }
 
         //colliding with other vehicle
-        if (other.gameObject.tag == "Vehicle")
+        if (other.gameObject.tag == "Vehicle" && collideBoostTimer <= 0)
         {
             other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f,1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
             //poomf effect
@@ -173,6 +180,7 @@ public class Player : MonoBehaviour
             Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
             playerSound.volume = 0.2f;
             playerSound.PlayOneShot(tussleSound, 1f);
+            collideBoostTimer = 0.7f;
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 0.3f;
             CameraMovement.shake_decay = 0.005f;

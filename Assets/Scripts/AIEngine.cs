@@ -16,6 +16,7 @@ public class AIEngine : MonoBehaviour
     public float newSteerAngle;
     public float angle;
     public float initialSize;
+    public float collideBoostTimer;
     public float xVelocity;
     public float zVelocity;
 
@@ -57,6 +58,12 @@ public class AIEngine : MonoBehaviour
 
         xVelocity = AIRB.velocity.x;
         zVelocity = AIRB.velocity.z;
+
+        //make it so the vehicle cant spam boost collide with other
+        if (collideBoostTimer > 0)
+        {
+            collideBoostTimer -= Time.deltaTime;
+        }
 
         //sprite size increase
         if (AIPos.localScale.x <= initialSize)
@@ -178,18 +185,20 @@ public class AIEngine : MonoBehaviour
     {
 
         //colliding with other vehicle
-        if (other.gameObject.tag == "Vehicle")
+        if (other.gameObject.tag == "Vehicle" && collideBoostTimer <= 0)
         {
             other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
             //poomf effect
+            collideBoostTimer = 0.7f;
             Debug.Log("Collision with vehicle " + other.gameObject.name);
             Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
 
         }
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && collideBoostTimer <= 0)
         {
             other.gameObject.GetComponent<Player>().playerRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
             //poomf effect
+            collideBoostTimer = 0.7f;
             Debug.Log("Collision with player");
             Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
 
