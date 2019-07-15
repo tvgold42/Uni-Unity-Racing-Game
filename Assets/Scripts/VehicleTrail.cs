@@ -6,6 +6,7 @@ public class VehicleTrail : MonoBehaviour
 {
     private TrailRenderer playerTrail;
     public GameObject vehicle;
+    public TrailRenderer playerBoostTrail;
     public float speedX;
     public float speedZ;
     // Start is called before the first frame update
@@ -33,6 +34,19 @@ public class VehicleTrail : MonoBehaviour
         if (speedZ <= 15 && speedZ >= -15 && speedX <= 15 && speedX >= -15 && ( Input.GetAxis("Horizontal") <= 0.5f && Input.GetAxis("Horizontal") >= -0.5f) )
         {
             playerTrail.emitting = false;
+        }
+
+        //toggle between trails depending on boost
+        if (vehicle.GetComponent<Player>().fuelBoosting == true)
+        {
+            playerBoostTrail.emitting = true;
+            playerTrail.emitting = false;
+        }
+
+        if (vehicle.GetComponent<Player>().fuelBoosting == false)
+        {
+            playerBoostTrail.emitting = false;
+            playerTrail.emitting = true;
         }
     }
 }

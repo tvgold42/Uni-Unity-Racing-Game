@@ -17,16 +17,26 @@ public class Player : MonoBehaviour
     public float accelerate;
     public float brake;
     public float collideBoostTimer;
-    public static float playerX;
-    public static float playerZ;
+    private static float playerX;
+    private static float playerZ;
 
-    public float xVelocity;
-    public float zVelocity;
+    public float fuelLeft;
+    public bool fuelBoosting;
+    public float boostCooldown;
+    public float currentLap;
+    public float currentCheckPoint;
 
-    public float initialSize;
+    private float xVelocity;
+    private float zVelocity;
+
+    public float yPositionCap;
+
+    private float initialSize;
 
     public GameObject boostEffect;
     public GameObject landEffect;
+
+    public GameObject racehandler;
 
 
 
@@ -40,6 +50,7 @@ public class Player : MonoBehaviour
         playerCol = GetComponent<BoxCollider>();
         playerSound = GetComponent<AudioSource>();
         initialSize = transform.localScale.x;
+        fuelLeft = 10;
         
         
     }
@@ -51,6 +62,10 @@ public class Player : MonoBehaviour
         playerZ = gameObject.transform.position.z;
         xVelocity = playerRB.velocity.x;
         zVelocity = playerRB.velocity.z;
+        if (transform.position.y >= yPositionCap)
+        {
+            transform.position = new Vector3(transform.position.x, yPositionCap, transform.position.z);
+        }
 
         //make it so the vehicle cant spam boost collide with other
         if (collideBoostTimer > 0)
@@ -115,6 +130,39 @@ public class Player : MonoBehaviour
             {
                 playerRB.AddForce(transform.up * (accelerate * accel));
             }
+
+            //make this work with a controller too 
+            //boosting
+            if (Input.GetKey("space") && fuelLeft > 0 && boostCooldown <= 0)
+            {
+                if (fuelBoosting == false) { Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                    //set base boosting velocity
+                    playerRB.AddForce(transform.up * accel  * 30);
+                    Instantiate(racehandler.GetComponent<RaceHandler>().whiteFlash, new Vector3(racehandler.transform.position.x, racehandler.transform.position.y + 1, racehandler.transform.position.z), Quaternion.Euler(90, 0, 0));
+                    fuelBoosting = true;
+
+                }
+
+                fuelLeft -= Time.deltaTime;
+                fuelBoosting = true;
+            }
+            else
+                fuelBoosting = false;
+
+            if(Input.GetKeyUp("space") || (Input.GetKey("space") && fuelLeft <= 0))
+            {
+                CameraMovement.shake_intensity = 0f;
+                CameraMovement.originPosition = transform.position;
+                //cooldown so you cant spam boost activation
+                boostCooldown = 2;
+
+            }
+
+            if (fuelBoosting == true) { accel = 500;
+                CameraMovement.shake_intensity = 0.1f;
+                CameraMovement.originPosition = transform.position;
+            }
+            if (fuelBoosting == false) { accel = 330; boostCooldown -= Time.deltaTime; }
         }
    
 
@@ -145,7 +193,7 @@ public class Player : MonoBehaviour
         if (other.gameObject.tag == "BoostPad" )
         {
             Debug.Log("BoostPad");
-            playerRB.AddForce(transform.up * 500 * 20f);
+            playerRB.AddForce(transform.up * 800 * 20f);
             Instantiate(boostEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), transform.rotation);
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 0.5f;
@@ -153,6 +201,7 @@ public class Player : MonoBehaviour
             //change volume accordingly
             playerSound.volume = 0.2f;
             playerSound.PlayOneShot(boostSound, 1f);
+            collideBoostTimer = 0.7f;
 
         }
 
@@ -169,6 +218,7 @@ public class Player : MonoBehaviour
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 0.3f;
             CameraMovement.shake_decay = 0.005f;
+            collideBoostTimer = 0.7f;
         }
 
         //colliding with other vehicle

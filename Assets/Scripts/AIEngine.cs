@@ -7,6 +7,7 @@ public class AIEngine : MonoBehaviour
 
     public Transform AIPath;
     public Transform AIPos;
+    public Transform playerPos;
     public  Rigidbody AIRB;
     public WheelCollider AIWheel;
     public WheelCollider AIWheel2;
@@ -14,11 +15,20 @@ public class AIEngine : MonoBehaviour
     public float topSpeed = 500;
     public float accel;
     public float newSteerAngle;
+    private float oldSteerAngle;
     public float angle;
     public float initialSize;
     public float collideBoostTimer;
     public float xVelocity;
     public float zVelocity;
+
+    public float yPositionCap;
+
+    public float swerveTimer = 8;
+    public float swereAngle;
+
+    public float currentLap;
+    public float currentCheckPoint;
 
     public GameObject boostEffect;
     public GameObject landEffect;
@@ -34,6 +44,8 @@ public class AIEngine : MonoBehaviour
         AIPos = GetComponent<Transform>();
         AIRB = GetComponent<Rigidbody>();
         initialSize = transform.localScale.x;
+        currentLap = 0;
+        oldSteerAngle = maxSteerAngle;
 
         Transform[] pathLine = AIPath.GetComponentsInChildren<Transform>();
         pathNodes = new List<Transform>();
@@ -58,7 +70,10 @@ public class AIEngine : MonoBehaviour
 
         xVelocity = AIRB.velocity.x;
         zVelocity = AIRB.velocity.z;
-
+        if (transform.position.y >= yPositionCap)
+        {
+            transform.position = new Vector3(transform.position.x, yPositionCap, transform.position.z);
+        }
         //make it so the vehicle cant spam boost collide with other
         if (collideBoostTimer > 0)
         {
@@ -123,6 +138,25 @@ public class AIEngine : MonoBehaviour
             AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, -topSpeed + Time.deltaTime);
         }
 
+
+        //swerve into player
+        if (Vector3.Distance(transform.position, playerPos.position) <= 8f && swerveTimer <= 0)
+        {
+            swerveTimer = 10;
+            swereAngle = Random.Range(-3f, 3f);
+
+        }
+        if (swerveTimer > 9.5f)
+        {
+            newSteerAngle = 0;
+            angle += swereAngle;
+            maxSteerAngle = 0;
+        }
+        if (swerveTimer <= 9.5f)
+        {
+            maxSteerAngle = oldSteerAngle;
+        }
+
     }
 
     private void CheckNodeDistance()
@@ -135,19 +169,30 @@ public class AIEngine : MonoBehaviour
             {
                 //new lap if at last node
                 currentPathNode = 0;
+                currentCheckPoint = 0;
+                
             }
             else
             {
+                //if crossing the first point, increase lap count by 1
+                if (currentCheckPoint == 0)
+                {
+                    currentLap++;
+                }
                 //if not at end, go to next node
                 currentPathNode++;
+                currentCheckPoint++;
+
             }
         }
     }
     private void Drive()
     {
-        if (RaceHandler.raceStarted == true)
+        //only drive if you havent finished race
+        if (RaceHandler.raceStarted == true && currentLap < 4)
         {
             AIRB.AddForce(transform.up * accel);
+            swerveTimer -= Time.deltaTime;
         }
     }
 
@@ -175,6 +220,7 @@ public class AIEngine : MonoBehaviour
             Debug.Log("BoostPad");
             AIRB.AddForce(transform.up * 500 * 20f);
             Instantiate(boostEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), transform.rotation);
+            collideBoostTimer = 0.7f;
 
         }
 
