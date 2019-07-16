@@ -143,7 +143,7 @@ public class Player : MonoBehaviour
 
                 }
 
-                fuelLeft -= Time.deltaTime;
+                fuelLeft -= Time.deltaTime * 3;
                 fuelBoosting = true;
             }
             else
@@ -163,6 +163,11 @@ public class Player : MonoBehaviour
                 CameraMovement.originPosition = transform.position;
             }
             if (fuelBoosting == false) { accel = 330; boostCooldown -= Time.deltaTime; }
+
+            //regen boost when boost cooldown over
+            if(boostCooldown <= 0 && fuelLeft <= 5){fuelLeft += Time.deltaTime / 2;}
+            //keep fuel at cap
+            if(fuelLeft >= 10) { fuelLeft = 10; }
         }
    
 
@@ -234,6 +239,7 @@ public class Player : MonoBehaviour
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 0.3f;
             CameraMovement.shake_decay = 0.005f;
+            fuelLeft += 1;
         }
     }
 }

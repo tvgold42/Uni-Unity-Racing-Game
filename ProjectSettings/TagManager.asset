@@ -7,6 +7,8 @@ TagManager:
   - BoostPad
   - Ground
   - Vehicle
+  - Hud
+  - PreviewHud
   layers:
   - Default
   - TransparentFX

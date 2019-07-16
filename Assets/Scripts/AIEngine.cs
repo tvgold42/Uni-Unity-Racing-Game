@@ -189,7 +189,7 @@ public class AIEngine : MonoBehaviour
     private void Drive()
     {
         //only drive if you havent finished race
-        if (RaceHandler.raceStarted == true && currentLap < 4)
+        if (RaceHandler.raceStarted == true /*&& currentLap < 4*/)
         {
             AIRB.AddForce(transform.up * accel);
             swerveTimer -= Time.deltaTime;
