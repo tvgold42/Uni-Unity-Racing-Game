@@ -33,8 +33,13 @@ public class Player : MonoBehaviour
 
     private float initialSize;
 
+    public float maxHealth;
+    public float currentHealth;
+    public float healthCooldown;
+
     public GameObject boostEffect;
     public GameObject landEffect;
+    public GameObject hurtEffect;
 
     public GameObject racehandler;
 
@@ -51,6 +56,8 @@ public class Player : MonoBehaviour
         playerSound = GetComponent<AudioSource>();
         initialSize = transform.localScale.x;
         fuelLeft = 10;
+        currentHealth = 10;
+        maxHealth = currentHealth;
         
         
     }
@@ -62,6 +69,14 @@ public class Player : MonoBehaviour
         playerZ = gameObject.transform.position.z;
         xVelocity = playerRB.velocity.x;
         zVelocity = playerRB.velocity.z;
+
+        //health regen cooldown
+        healthCooldown -= Time.deltaTime;
+        if (healthCooldown <= 0 && currentHealth <= maxHealth)
+        {
+            currentHealth += Time.deltaTime / 3;
+        }
+
         if (transform.position.y >= yPositionCap)
         {
             transform.position = new Vector3(transform.position.x, yPositionCap, transform.position.z);
@@ -133,7 +148,7 @@ public class Player : MonoBehaviour
 
             //make this work with a controller too 
             //boosting
-            if (Input.GetKey("space") && fuelLeft > 0 && boostCooldown <= 0)
+            if ((Input.GetKey("space") || Input.GetKey(KeyCode.Joystick1Button0)) && fuelLeft > 0 && boostCooldown <= 0)
             {
                 if (fuelBoosting == false) { Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
                     //set base boosting velocity
@@ -143,7 +158,7 @@ public class Player : MonoBehaviour
 
                 }
 
-                fuelLeft -= Time.deltaTime;
+                fuelLeft -= Time.deltaTime * 3;
                 fuelBoosting = true;
             }
             else
@@ -163,6 +178,11 @@ public class Player : MonoBehaviour
                 CameraMovement.originPosition = transform.position;
             }
             if (fuelBoosting == false) { accel = 330; boostCooldown -= Time.deltaTime; }
+
+            //regen boost when boost cooldown over
+            if(boostCooldown <= 0 && fuelLeft <= 5){fuelLeft += Time.deltaTime / 2;}
+            //keep fuel at cap
+            if(fuelLeft >= 10) { fuelLeft = 10; }
         }
    
 
@@ -227,13 +247,29 @@ public class Player : MonoBehaviour
             other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f,1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
             //poomf effect
             Debug.Log("Collision with vehicle " + other.gameObject.name);
-            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
-            playerSound.volume = 0.2f;
-            playerSound.PlayOneShot(tussleSound, 1f);
+
             collideBoostTimer = 0.7f;
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 0.3f;
             CameraMovement.shake_decay = 0.005f;
+            fuelLeft += 1;
+
+            //take damage if not boosting
+            if(fuelBoosting == false)
+            {
+                //neative collision
+                currentHealth -= 2f;
+                Instantiate(hurtEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                healthCooldown = 2;
+                //play a damage sound
+            }
+            if (fuelBoosting == true)
+            {
+                //positive collision
+                Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                playerSound.volume = 0.2f;
+                playerSound.PlayOneShot(tussleSound, 1f);
+            }
         }
     }
 }

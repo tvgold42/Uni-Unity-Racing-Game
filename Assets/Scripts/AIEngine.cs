@@ -13,19 +13,26 @@ public class AIEngine : MonoBehaviour
     public WheelCollider AIWheel2;
     public float maxSteerAngle = 40f;
     public float topSpeed = 500;
+    public float topSpeedBackup;
     public float accel;
+    public float backupAccel;
     public float newSteerAngle;
     private float oldSteerAngle;
     public float angle;
     public float initialSize;
     public float collideBoostTimer;
+    public float boostCoolDown;
+    public bool boosting;
     public float xVelocity;
     public float zVelocity;
 
     public float yPositionCap;
 
     public float swerveTimer = 8;
-    public float swereAngle;
+    public float swerveAngle;
+
+    public float maxHealth;
+    public float currentHealth;
 
     public float currentLap;
     public float currentCheckPoint;
@@ -46,6 +53,11 @@ public class AIEngine : MonoBehaviour
         initialSize = transform.localScale.x;
         currentLap = 0;
         oldSteerAngle = maxSteerAngle;
+        currentHealth = 10;
+        boostCoolDown = Random.Range(2f, 8f);
+        maxHealth = currentHealth;
+        backupAccel = accel;
+        topSpeedBackup = topSpeed;
 
         Transform[] pathLine = AIPath.GetComponentsInChildren<Transform>();
         pathNodes = new List<Transform>();
@@ -98,29 +110,6 @@ public class AIEngine : MonoBehaviour
             AIPos.localScale = new Vector3(5, 5, initialSize);
         }
 
-        //speedcaps
-        /*
-        if (AIRB.velocity.x >= topSpeed)
-        {
-            AIRB.velocity = new Vector3(topSpeed - Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z);
-            if (AIRB.velocity.x >= 60) { AIRB.velocity = new Vector3(60 - Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z); }
-        }
-        if (AIRB.velocity.z >= topSpeed)
-        {
-            AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, topSpeed - Time.deltaTime);
-            if (AIRB.velocity.z >= 60) { AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, 60 - Time.deltaTime); }
-        }
-        if (AIRB.velocity.x <= -topSpeed)
-        {
-            AIRB.velocity = new Vector3(-topSpeed + Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z);
-            if (AIRB.velocity.x <= -60) { AIRB.velocity = new Vector3(-60 + Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z); }
-        }
-        if (AIRB.velocity.z <= -topSpeed)
-        {
-            AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, -topSpeed + Time.deltaTime);
-            if (AIRB.velocity.z <= -60) { AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y,  - 60 + Time.deltaTime); }
-        }
-        */
         if (AIRB.velocity.x >= topSpeed)
         {
             AIRB.velocity = new Vector3(topSpeed - Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z);
@@ -143,18 +132,44 @@ public class AIEngine : MonoBehaviour
         if (Vector3.Distance(transform.position, playerPos.position) <= 8f && swerveTimer <= 0)
         {
             swerveTimer = 10;
-            swereAngle = Random.Range(-3f, 3f);
+            swerveAngle = Random.Range(-3f, 3f);
 
         }
         if (swerveTimer > 9.5f)
         {
             newSteerAngle = 0;
-            angle += swereAngle;
+            angle += swerveAngle;
             maxSteerAngle = 0;
         }
         if (swerveTimer <= 9.5f)
         {
             maxSteerAngle = oldSteerAngle;
+        }
+
+        //boosting
+        if (RaceHandler.raceStarted == true)
+        {
+            boostCoolDown -= Time.deltaTime;
+        }
+        if (boostCoolDown <= 0 && boosting == false)
+        {
+            boosting = true;
+            accel *= 2f;
+            topSpeed *= 3;
+            Debug.Log("Ai Boost");
+            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+        }
+        if (boostCoolDown <= -3 + Random.Range(-3,1) && boosting == true)
+        {
+            boostCoolDown = Random.Range(5,15);
+            boosting = false;
+            
+        }
+        //reset speed values after boosting ends
+        if (boosting == false && accel != backupAccel)
+        {
+            accel = backupAccel;
+            topSpeed = topSpeedBackup;
         }
 
     }
@@ -189,12 +204,12 @@ public class AIEngine : MonoBehaviour
     private void Drive()
     {
         //only drive if you havent finished race
-        if (RaceHandler.raceStarted == true && currentLap < 4)
+        if (RaceHandler.raceStarted == true  /*&& currentLap < 4*/)
         {
             AIRB.AddForce(transform.up * accel);
             swerveTimer -= Time.deltaTime;
         }
-    }
+        }
 
     //turning towards checkpoints
     private void Steering()
