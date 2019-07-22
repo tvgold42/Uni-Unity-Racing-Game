@@ -46,7 +46,7 @@ public class RaceHandler : MonoBehaviour
             Instantiate(whiteFlash, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Quaternion.Euler(90, 0, 0));
         }
         //skipping track preview
-        if (Input.GetKeyDown(KeyCode.Return) && racePreview == true)
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetButton("Submit")) && racePreview == true)
         {
            racePreview = false;
             //stop playing intro music and play main music

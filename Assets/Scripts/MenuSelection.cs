@@ -59,7 +59,7 @@ public class MenuSelection : MonoBehaviour
 
 
         //selecting
-        if (Input.GetKeyDown(KeyCode.Return) && selected == false)
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetButton("Fire1")) && selected == false)
         {
             Debug.Log("entered");
             selected = true;

@@ -9,6 +9,7 @@ TagManager:
   - Vehicle
   - Hud
   - PreviewHud
+  - Vehicle Fodder
   layers:
   - Default
   - TransparentFX

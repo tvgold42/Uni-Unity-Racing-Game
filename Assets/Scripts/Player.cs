@@ -7,9 +7,12 @@ public class Player : MonoBehaviour
     public Transform playerPos;
     public Rigidbody playerRB;
     public BoxCollider playerCol;
+    public SpriteRenderer playerRender;
     public AudioSource playerSound;
     public AudioClip boostSound;
-    public AudioClip tussleSound;
+    public AudioClip tussleSoundGood;
+    public AudioClip tussleSoundBad;
+    public AudioClip engineSound;
     public float accel;
     public float steer;
     public float angle;
@@ -23,8 +26,6 @@ public class Player : MonoBehaviour
     public float fuelLeft;
     public bool fuelBoosting;
     public float boostCooldown;
-    public float currentLap;
-    public float currentCheckPoint;
 
     private float xVelocity;
     private float zVelocity;
@@ -33,11 +34,30 @@ public class Player : MonoBehaviour
 
     private float initialSize;
 
+    public float maxHealth;
+    public float currentHealth;
+    public float healthCooldown;
+    public float ratings = 0;
+
+    public bool death = false;
+    public float respawnTimer = 2;
+    public float respawnInvuln = 0;
+    private bool engineActive = false;
+
     public GameObject boostEffect;
     public GameObject landEffect;
+    public GameObject hurtEffect;
+    public GameObject explosionEffect;
 
     public GameObject racehandler;
 
+    //path finding
+    public float currentLap;
+    public float currentCheckPoint;
+    public Transform PlayerPath;
+    private List<Transform> pathNodes;
+    public int currentPathNode = 0;
+    
 
 
 
@@ -48,20 +68,78 @@ public class Player : MonoBehaviour
         playerPos = GetComponent<Transform>();
         playerRB = GetComponent<Rigidbody>();
         playerCol = GetComponent<BoxCollider>();
+        playerRender = GetComponent<SpriteRenderer>();
         playerSound = GetComponent<AudioSource>();
         initialSize = transform.localScale.x;
         fuelLeft = 10;
-        
-        
+        currentHealth = 10;
+        maxHealth = currentHealth;
+        ratings = 0;
+        currentLap = 0;
+        Transform[] pathLine = PlayerPath.GetComponentsInChildren<Transform>();
+        pathNodes = new List<Transform>();
+        //count all the nodes so a lap can be cleared
+        for (int i = 0; i < pathLine.Length; i++)
+        {
+            //not the parent object node though
+            if (pathLine[i] != PlayerPath.transform)
+            {
+                pathNodes.Add(pathLine[i]);
+            }
+        }
+
+
+    }
+
+
+    private void CheckNodeDistance()
+    {
+        //check if close enough to node to confirm progress through track
+        if (Vector3.Distance(transform.position, pathNodes[currentPathNode].position) <= 18f)
+        {
+            //confirm node is passed and set target to next node
+            if (currentPathNode == pathNodes.Count - 1)
+            {
+                //new lap if at last node
+                currentPathNode = 0;
+                currentCheckPoint = 0;
+
+            }
+            else
+            {
+                //if crossing the first point, increase lap count by 1
+                if (currentCheckPoint == 0)
+                {
+                    currentLap++;
+                    //get points
+                    ratings += 100;
+                }
+                //if not at end, go to next node
+                currentPathNode++;
+                currentCheckPoint++;
+
+            }
+        }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        CheckNodeDistance();
+
         playerX = gameObject.transform.position.x;
         playerZ = gameObject.transform.position.z;
         xVelocity = playerRB.velocity.x;
         zVelocity = playerRB.velocity.z;
+
+        //health regen cooldown
+        healthCooldown -= Time.deltaTime;
+        if (healthCooldown <= 0 && currentHealth <= maxHealth && death == false)
+        {
+            currentHealth += Time.deltaTime / 3;
+        }
+        if (currentHealth <= 0) { currentHealth = 0; }
+
         if (transform.position.y >= yPositionCap)
         {
             transform.position = new Vector3(transform.position.x, yPositionCap, transform.position.z);
@@ -104,15 +182,17 @@ public class Player : MonoBehaviour
         }
 
         //disable controls if race hasnt started
-        if (RaceHandler.raceStarted == true)
+        if (RaceHandler.raceStarted == true && death == false)
         {
+            //keyboard
             if (Input.GetKey("left"))
             {
                 angle += Time.deltaTime * 75 + (h * 1.5f);
             }
+            //controller
             if (Input.GetAxis("Horizontal") < -0.3)
             {
-                angle += Time.deltaTime * 125 + (Input.GetAxis("Horizontal") * -5);
+                angle += Time.deltaTime * 2 + (Input.GetAxis("Horizontal") * -5);
             }
             if (Input.GetKey("right"))
             {
@@ -120,20 +200,30 @@ public class Player : MonoBehaviour
             }
             if (Input.GetAxis("Horizontal") > 0.3)
             {
-                angle -= Time.deltaTime * 125 - (Input.GetAxis("Horizontal") * -5);
+                angle -= Time.deltaTime * 2 - (Input.GetAxis("Horizontal") * -5);
             }
             if (Input.GetAxis("Vertical") != 0)
             {
                 playerRB.AddForce(transform.up * (v * accel));
+                if (RaceHandler.raceStarted == true && engineActive == false)
+                {
+                    engineActive = true;
+                    playerSound.PlayOneShot(engineSound, 1f);
+                }
             }
             if (accelerate != 0)
             {
                 playerRB.AddForce(transform.up * (accelerate * accel));
+                if (RaceHandler.raceStarted == true && engineActive == false)
+                {
+                    engineActive = true;
+                    playerSound.PlayOneShot(engineSound, 1f);
+                }
             }
 
             //make this work with a controller too 
             //boosting
-            if (Input.GetKey("space") && fuelLeft > 0 && boostCooldown <= 0)
+            if ((Input.GetKey("space") || Input.GetButton("Fire1")) && fuelLeft > 0 && boostCooldown <= 0)
             {
                 if (fuelBoosting == false) { Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
                     //set base boosting velocity
@@ -149,7 +239,7 @@ public class Player : MonoBehaviour
             else
                 fuelBoosting = false;
 
-            if(Input.GetKeyUp("space") || (Input.GetKey("space") && fuelLeft <= 0))
+            if(Input.GetKeyUp("space") || Input.GetButtonUp("Fire1") || ((Input.GetKey("space") || Input.GetButton("Fire1"))) && fuelLeft <= 0)
             {
                 CameraMovement.shake_intensity = 0f;
                 CameraMovement.originPosition = transform.position;
@@ -169,7 +259,49 @@ public class Player : MonoBehaviour
             //keep fuel at cap
             if(fuelLeft >= 10) { fuelLeft = 10; }
         }
-   
+
+
+        //death and respawning
+        if (currentHealth <= 0 && death == false)
+        {
+            //stop moving, go invisible, spawn explosion prefab
+            death = true;
+            engineActive = false;
+            respawnTimer = 3;
+            playerRB.velocity = Vector3.zero;
+            CameraMovement.originPosition = transform.position;
+            CameraMovement.shake_intensity = 1.25f;
+            CameraMovement.shake_decay = 0.005f;
+            Instantiate(explosionEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Quaternion.Euler(90,0,0));
+            //replace sprite renderer with mesh renderer in future
+            playerRender.enabled = false;
+        }
+        if (death == true && respawnTimer >= 0)
+        {
+            respawnTimer -= Time.deltaTime;
+            playerRB.velocity = Vector3.zero;
+            playerCol.enabled = false;
+        }
+        if (death == true && respawnTimer <= 0)
+        {
+            Debug.Log("Respawned Player");
+            death = false;
+            playerCol.enabled = true;
+            playerRender.enabled = true;
+            respawnInvuln = 3;
+            currentHealth = maxHealth;
+        }
+
+        if (respawnInvuln >= 0)
+        {
+            respawnInvuln -= Time.deltaTime;
+            //flash for invuln
+            if (respawnInvuln >= 1.5 && respawnInvuln <= 2.5) {playerRender.enabled = false;}
+            if (respawnInvuln <= 1.5 && respawnInvuln >= 1) { playerRender.enabled = true; }
+            if (respawnInvuln <= 1 && respawnInvuln >= 0.1) { playerRender.enabled = false; }
+            if (respawnInvuln <= 0.1) { playerRender.enabled = true; }
+        }
+
 
         if (playerRB.velocity.x >= topSpeed)
         {
@@ -192,6 +324,7 @@ public class Player : MonoBehaviour
         transform.eulerAngles = new Vector3(90, transform.rotation.y, angle);
 
     }
+
 
     void OnTriggerEnter(Collider other)
     {
@@ -227,19 +360,46 @@ public class Player : MonoBehaviour
         }
 
         //colliding with other vehicle
-        if (other.gameObject.tag == "Vehicle" && collideBoostTimer <= 0)
+        if ((other.gameObject.tag == "Vehicle" || other.gameObject.tag == "Vehicle Fodder") && collideBoostTimer <= 0)
         {
             other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f,1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
             //poomf effect
             Debug.Log("Collision with vehicle " + other.gameObject.name);
-            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
-            playerSound.volume = 0.2f;
-            playerSound.PlayOneShot(tussleSound, 1f);
+
             collideBoostTimer = 0.7f;
             CameraMovement.originPosition = transform.position;
-            CameraMovement.shake_intensity = 0.3f;
+            CameraMovement.shake_intensity += 0.3f;
             CameraMovement.shake_decay = 0.005f;
             fuelLeft += 1;
+
+            //take damage if not boosting
+            if(fuelBoosting == false)
+            {
+                //neative collision
+                Instantiate(hurtEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                //only lose health if not just respawned
+                if (respawnInvuln <= 0)
+                { currentHealth -= 4.5f;
+                  healthCooldown = 2; }
+                playerSound.PlayOneShot(tussleSoundBad, 1f);
+                if (currentHealth <= 0)
+                {
+                    if (other.gameObject.tag == "Vehicle")
+                    {
+                        //give opposing vehicle a quarter of their ratings
+                        other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
+
+                    }
+                    ratings *= 0.5f;
+                }
+            }
+            if (fuelBoosting == true)
+            {
+                //positive collision
+                Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                playerSound.volume = 0.2f;
+                playerSound.PlayOneShot(tussleSoundGood, 1f);
+            }
         }
     }
 }

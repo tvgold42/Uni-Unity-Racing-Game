@@ -11,27 +11,42 @@ public class AIEngine : MonoBehaviour
     public  Rigidbody AIRB;
     public WheelCollider AIWheel;
     public WheelCollider AIWheel2;
+    public SpriteRenderer AIRender;
+    public BoxCollider AICol;
     public float maxSteerAngle = 40f;
     public float topSpeed = 500;
+    public float topSpeedBackup;
     public float accel;
+    public float backupAccel;
     public float newSteerAngle;
     private float oldSteerAngle;
     public float angle;
     public float initialSize;
     public float collideBoostTimer;
+    public float boostCoolDown;
+    public bool boosting;
     public float xVelocity;
     public float zVelocity;
 
     public float yPositionCap;
 
     public float swerveTimer = 8;
-    public float swereAngle;
+    public float swerveAngle;
+
+    public float maxHealth;
+    public float currentHealth;
+    public float ratings = 0;
+
+    public bool death = false;
+    public float respawnTimer = 2;
+    public float respawnInvuln = 0;
 
     public float currentLap;
     public float currentCheckPoint;
 
     public GameObject boostEffect;
     public GameObject landEffect;
+    public GameObject explosionEffect;
 
     private List<Transform> pathNodes;
 
@@ -43,9 +58,18 @@ public class AIEngine : MonoBehaviour
     {
         AIPos = GetComponent<Transform>();
         AIRB = GetComponent<Rigidbody>();
+        AICol = GetComponent<BoxCollider>();
         initialSize = transform.localScale.x;
         currentLap = 0;
         oldSteerAngle = maxSteerAngle;
+        currentHealth = 10;
+        maxHealth = currentHealth;
+        //fodder enemies have 1 hp
+        if (gameObject.tag == "Vehicle Fodder") { currentHealth = 1; maxHealth = 1; }
+        boostCoolDown = Random.Range(2f, 8f);
+        backupAccel = accel;
+        topSpeedBackup = topSpeed;
+        ratings = 0;
 
         Transform[] pathLine = AIPath.GetComponentsInChildren<Transform>();
         pathNodes = new List<Transform>();
@@ -98,29 +122,50 @@ public class AIEngine : MonoBehaviour
             AIPos.localScale = new Vector3(5, 5, initialSize);
         }
 
-        //speedcaps
-        /*
-        if (AIRB.velocity.x >= topSpeed)
+        //death and respawning
+        if (currentHealth <= 0 && death == false)
         {
-            AIRB.velocity = new Vector3(topSpeed - Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z);
-            if (AIRB.velocity.x >= 60) { AIRB.velocity = new Vector3(60 - Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z); }
+            //stop moving, go invisible, spawn explosion prefab
+            death = true;
+            respawnTimer = 3;
+            AIRB.velocity = Vector3.zero;
+            Instantiate(explosionEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Quaternion.Euler(90, 0, 0));
+            //replace sprite renderer with mesh renderer in future
+            AIRender.enabled = false;
         }
-        if (AIRB.velocity.z >= topSpeed)
+        if (death == true && respawnTimer >= 0)
         {
-            AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, topSpeed - Time.deltaTime);
-            if (AIRB.velocity.z >= 60) { AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, 60 - Time.deltaTime); }
+            respawnTimer -= Time.deltaTime;
+            AIRB.velocity = Vector3.zero;
+            AICol.enabled = false;
+            AIWheel.enabled = false;
+            AIWheel2.enabled = false;
         }
-        if (AIRB.velocity.x <= -topSpeed)
+        if (death == true && respawnTimer <= 0)
         {
-            AIRB.velocity = new Vector3(-topSpeed + Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z);
-            if (AIRB.velocity.x <= -60) { AIRB.velocity = new Vector3(-60 + Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z); }
+            Debug.Log("Respawned AI");
+            death = false;
+            AICol.enabled = true;
+            AIWheel.enabled = true;
+            AIWheel2.enabled = true;
+            AIRender.enabled = true;
+            respawnInvuln = 3;
+            currentHealth = maxHealth;
         }
-        if (AIRB.velocity.z <= -topSpeed)
+
+        if (respawnInvuln >= 0)
         {
-            AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y, -topSpeed + Time.deltaTime);
-            if (AIRB.velocity.z <= -60) { AIRB.velocity = new Vector3(AIRB.velocity.x, AIRB.velocity.y,  - 60 + Time.deltaTime); }
+            respawnInvuln -= Time.deltaTime;
+            //flash for invuln
+            if (respawnInvuln >= 2 && respawnInvuln <= 2.5) { AIRender.enabled = false; }
+            if (respawnInvuln <= 2 && respawnInvuln >= 1.5) { AIRender.enabled = true; }
+            if (respawnInvuln <= 1.5 && respawnInvuln >= 1) { AIRender.enabled = false; }
+            if (respawnInvuln <= 1 && respawnInvuln >= 0.5) { AIRender.enabled = true; }
+            if (respawnInvuln <= 0.5 && respawnInvuln >= 0.2) { AIRender.enabled = false; }
+            if (respawnInvuln <= 0.1) { AIRender.enabled = true; }
         }
-        */
+
+        //speed caps
         if (AIRB.velocity.x >= topSpeed)
         {
             AIRB.velocity = new Vector3(topSpeed - Time.deltaTime, AIRB.velocity.y, AIRB.velocity.z);
@@ -143,18 +188,44 @@ public class AIEngine : MonoBehaviour
         if (Vector3.Distance(transform.position, playerPos.position) <= 8f && swerveTimer <= 0)
         {
             swerveTimer = 10;
-            swereAngle = Random.Range(-3f, 3f);
+            swerveAngle = Random.Range(-3f, 3f);
 
         }
         if (swerveTimer > 9.5f)
         {
             newSteerAngle = 0;
-            angle += swereAngle;
+            angle += swerveAngle;
             maxSteerAngle = 0;
         }
         if (swerveTimer <= 9.5f)
         {
             maxSteerAngle = oldSteerAngle;
+        }
+
+        //boosting
+        if (RaceHandler.raceStarted == true && gameObject.tag != "Vehicle Fodder")
+        {
+            boostCoolDown -= Time.deltaTime;
+        }
+        if (boostCoolDown <= 0 && boosting == false && gameObject.tag != "Vehicle Fodder")
+        {
+            boosting = true;
+            accel *= 2f;
+            topSpeed *= 3;
+            Debug.Log("Ai Boost");
+            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+        }
+        if (boostCoolDown <= -3 + Random.Range(-3,1) && boosting == true && gameObject.tag != "Vehicle Fodder")
+        {
+            boostCoolDown = Random.Range(5,15);
+            boosting = false;
+            
+        }
+        //reset speed values after boosting ends
+        if (boosting == false && accel != backupAccel && gameObject.tag != "Vehicle Fodder")
+        {
+            accel = backupAccel;
+            topSpeed = topSpeedBackup;
         }
 
     }
@@ -178,6 +249,8 @@ public class AIEngine : MonoBehaviour
                 if (currentCheckPoint == 0)
                 {
                     currentLap++;
+                    //get points
+                    ratings += 100;
                 }
                 //if not at end, go to next node
                 currentPathNode++;
@@ -189,12 +262,12 @@ public class AIEngine : MonoBehaviour
     private void Drive()
     {
         //only drive if you havent finished race
-        if (RaceHandler.raceStarted == true /*&& currentLap < 4*/)
+        if (RaceHandler.raceStarted == true  && death == false /*&& currentLap < 4*/)
         {
             AIRB.AddForce(transform.up * accel);
             swerveTimer -= Time.deltaTime;
         }
-    }
+        }
 
     //turning towards checkpoints
     private void Steering()
@@ -231,22 +304,41 @@ public class AIEngine : MonoBehaviour
     {
 
         //colliding with other vehicle
-        if (other.gameObject.tag == "Vehicle" && collideBoostTimer <= 0)
+        if ((other.gameObject.tag == "Vehicle" || other.gameObject.tag == "Vehicle Fodder" )&& collideBoostTimer <= 0)
         {
             other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
-            //poomf effect
             collideBoostTimer = 0.7f;
             Debug.Log("Collision with vehicle " + other.gameObject.name);
             Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+            //lose health
+            if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 2.5f; }
+            //if death, give attacking vehicle points
+            if (other.gameObject.tag == "Vehicle" && gameObject.tag == "Vehicle" && currentHealth <= 0)
+            {
+                //give opposing vehicle a quarter of their ratings
+                other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
+                ratings *= 0.5f;
+            }
+            //fodder enemy
+            if (gameObject.tag == "Vehicle Fodder") { other.gameObject.GetComponent<AIEngine>().ratings += 75;}
 
         }
         if (other.gameObject.tag == "Player" && collideBoostTimer <= 0)
         {
             other.gameObject.GetComponent<Player>().playerRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
-            //poomf effect
             collideBoostTimer = 0.7f;
             Debug.Log("Collision with player");
             Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+            if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 2.5f; }
+            //if death, give attacking vehicle points
+            if (currentHealth <= 0)
+            {
+                //give opposing vehicle a quarter of their ratings
+                other.gameObject.GetComponent<Player>().ratings += ratings / 4;
+                ratings *= 0.5f;
+            }
+            //fodder enemy
+            if (gameObject.tag == "Vehicle Fodder") { other.gameObject.GetComponent<Player>().ratings += 75; }
 
         }
     }

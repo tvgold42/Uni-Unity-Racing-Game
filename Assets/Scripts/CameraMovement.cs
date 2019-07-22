@@ -74,38 +74,7 @@ public class CameraMovement : MonoBehaviour
 
         //lock y
         transform.position = new Vector3(transform.position.x, 67, transform.position.z);
-        /*
-        transform.position += new Vector3(shakeX, shakeY, shakeZ);
-
-        if (shakeX >= 0) {shakeX -= Time.deltaTime;  }
-        if (shakeX <= 0) { shakeX += Time.deltaTime; }
-        if (Random.Range(0, 1) >= 0.5) { shakeX *= -1; }
-        if (Random.Range(0, 1) >= 0.5) { shakeX *= -1; }
-
-        if (shakeY >= 0) { shakeY -= Time.deltaTime;  }
-        if (shakeY <= 0) { shakeY += Time.deltaTime; }
-        if (Random.Range(0, 1) >= 0.5) { shakeY *= -1; }
-        if (Random.Range(0, 1) >= 0.5) { shakeY *= -1; }
-
-        if (shakeZ >= 0) { shakeZ -= Time.deltaTime; }
-        if (shakeZ <= 0) { shakeZ += Time.deltaTime; }
-        if (Random.Range(0, 1) >= 0.5) { shakeZ *= -1; }
-        if (Random.Range(0, 1) >= 0.5) { shakeZ *= -1; }
-        */
 
 
     }
-
-    /*
-     *    // public Transform playerPosition;
-             cameraX = Player.playerX;
-        cameraZ = Player.playerZ;
-        float translation = Time.deltaTime * 100;
-        gameObject.transform.position = new Vector3(cameraX , 60, cameraZ );
-
-    void LateUpdate()
-    {
-
-    }
-    */
 }
