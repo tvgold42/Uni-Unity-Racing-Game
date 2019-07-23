@@ -10,6 +10,8 @@ TagManager:
   - Hud
   - PreviewHud
   - Vehicle Fodder
+  - HealthPickup
+  - BoostPickup
   layers:
   - Default
   - TransparentFX

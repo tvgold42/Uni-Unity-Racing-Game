@@ -50,7 +50,7 @@ public class AIEngine : MonoBehaviour
 
     private List<Transform> pathNodes;
 
-    private int currentPathNode = 0;
+    public int currentPathNode = 0;
 
 
     // Start is called before the first frame update
@@ -60,13 +60,12 @@ public class AIEngine : MonoBehaviour
         AIRB = GetComponent<Rigidbody>();
         AICol = GetComponent<BoxCollider>();
         initialSize = transform.localScale.x;
-        currentLap = 0;
         oldSteerAngle = maxSteerAngle;
         currentHealth = 10;
         maxHealth = currentHealth;
         //fodder enemies have 1 hp
         if (gameObject.tag == "Vehicle Fodder") { currentHealth = 1; maxHealth = 1; }
-        boostCoolDown = Random.Range(2f, 8f);
+        boostCoolDown = Random.Range(0.5f, 1.5f);
         backupAccel = accel;
         topSpeedBackup = topSpeed;
         ratings = 0;
@@ -132,6 +131,11 @@ public class AIEngine : MonoBehaviour
             Instantiate(explosionEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Quaternion.Euler(90, 0, 0));
             //replace sprite renderer with mesh renderer in future
             AIRender.enabled = false;
+            //if close enough to player, play explosion sound for this vehicle
+            if (Vector3.Distance(transform.position, playerPos.position) <= 18f)
+            {
+                playerPos.gameObject.GetComponent<Player>().playerSound.PlayOneShot(playerPos.gameObject.GetComponent<Player>().explosion, 1f);
+            }
         }
         if (death == true && respawnTimer >= 0)
         {
@@ -214,6 +218,11 @@ public class AIEngine : MonoBehaviour
             topSpeed *= 3;
             Debug.Log("Ai Boost");
             Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+            //if close enough to player, play boost sound for this vehicle
+            if (Vector3.Distance(transform.position, playerPos.position) <= 18f)
+            {
+                playerPos.gameObject.GetComponent<Player>().playerSound.PlayOneShot(playerPos.gameObject.GetComponent<Player>().engineBoost, 1f);
+            }
         }
         if (boostCoolDown <= -3 + Random.Range(-3,1) && boosting == true && gameObject.tag != "Vehicle Fodder")
         {
@@ -296,7 +305,29 @@ public class AIEngine : MonoBehaviour
             collideBoostTimer = 0.7f;
 
         }
-
+        //pickups
+        if (other.gameObject.tag == "HealthPickup" && gameObject.tag == "Vehicle")
+        {
+            if (other.GetComponent<Pickup>().pickupAble == true && currentHealth < maxHealth)
+            {
+                //restore hp
+                currentHealth += maxHealth / 6;
+                if (currentHealth >= maxHealth) { currentHealth = maxHealth; }
+                other.GetComponent<Pickup>().respawnTimer = 4;
+            }
+        }
+        if (other.gameObject.tag == "BoostPickup" && gameObject.tag == "Vehicle")
+        {
+            if (other.GetComponent<Pickup>().pickupAble == true)
+            {
+                if (boosting == true)
+                {
+                    //as ai's dont have fuel, just increase the length of their boost
+                    boostCoolDown += 3;
+                }
+                other.GetComponent<Pickup>().respawnTimer = 4;
+            }
+        }
 
     }
 
@@ -311,7 +342,7 @@ public class AIEngine : MonoBehaviour
             Debug.Log("Collision with vehicle " + other.gameObject.name);
             Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
             //lose health
-            if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 2.5f; }
+            if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 4f; }
             //if death, give attacking vehicle points
             if (other.gameObject.tag == "Vehicle" && gameObject.tag == "Vehicle" && currentHealth <= 0)
             {
@@ -329,7 +360,7 @@ public class AIEngine : MonoBehaviour
             collideBoostTimer = 0.7f;
             Debug.Log("Collision with player");
             Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
-            if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 2.5f; }
+            if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 5f; }
             //if death, give attacking vehicle points
             if (currentHealth <= 0)
             {

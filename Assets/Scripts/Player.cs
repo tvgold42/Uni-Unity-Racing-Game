@@ -4,22 +4,24 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Transform playerPos;
+    private Transform playerPos;
     public Rigidbody playerRB;
-    public BoxCollider playerCol;
-    public SpriteRenderer playerRender;
+    private BoxCollider playerCol;
+    private SpriteRenderer playerRender;
     public AudioSource playerSound;
     public AudioClip boostSound;
     public AudioClip tussleSoundGood;
     public AudioClip tussleSoundBad;
     public AudioClip engineSound;
+    public AudioClip engineBoost;
+    public AudioClip explosion;
     public float accel;
     public float steer;
     public float angle;
     public float topSpeed;
     public float accelerate;
     public float brake;
-    public float collideBoostTimer;
+    private float collideBoostTimer;
     private static float playerX;
     private static float playerZ;
 
@@ -36,12 +38,12 @@ public class Player : MonoBehaviour
 
     public float maxHealth;
     public float currentHealth;
-    public float healthCooldown;
+    private float healthCooldown;
     public float ratings = 0;
 
-    public bool death = false;
-    public float respawnTimer = 2;
-    public float respawnInvuln = 0;
+    private bool death = false;
+    private float respawnTimer = 2;
+    private float respawnInvuln = 0;
     private bool engineActive = false;
 
     public GameObject boostEffect;
@@ -230,6 +232,7 @@ public class Player : MonoBehaviour
                     playerRB.AddForce(transform.up * accel  * 30);
                     Instantiate(racehandler.GetComponent<RaceHandler>().whiteFlash, new Vector3(racehandler.transform.position.x, racehandler.transform.position.y + 1, racehandler.transform.position.z), Quaternion.Euler(90, 0, 0));
                     fuelBoosting = true;
+                    playerSound.PlayOneShot(engineBoost, 1f);
 
                 }
 
@@ -273,6 +276,7 @@ public class Player : MonoBehaviour
             CameraMovement.shake_intensity = 1.25f;
             CameraMovement.shake_decay = 0.005f;
             Instantiate(explosionEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Quaternion.Euler(90,0,0));
+            playerSound.PlayOneShot(explosion, 1f);
             //replace sprite renderer with mesh renderer in future
             playerRender.enabled = false;
         }
@@ -341,6 +345,26 @@ public class Player : MonoBehaviour
             playerSound.PlayOneShot(boostSound, 1f);
             collideBoostTimer = 0.7f;
 
+        }
+
+        //pickups
+        if (other.gameObject.tag == "HealthPickup")
+        {
+            if (other.GetComponent<Pickup>().pickupAble == true && currentHealth < maxHealth)
+            {
+                //restore 25% hp
+                currentHealth += maxHealth / 4;
+                other.GetComponent<Pickup>().respawnTimer = 4;
+            }
+        }
+        if (other.gameObject.tag == "BoostPickup")
+        {
+            if (other.GetComponent<Pickup>().pickupAble == true && fuelLeft < 10)
+            {
+                //restore 50% fuel
+                fuelLeft += 5;
+                other.GetComponent<Pickup>().respawnTimer = 4;
+            }
         }
 
 

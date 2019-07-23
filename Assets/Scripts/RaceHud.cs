@@ -20,7 +20,7 @@ public class RaceHud : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         //disable hud if race hasnt started
         if (gameObject.tag == "Hud")

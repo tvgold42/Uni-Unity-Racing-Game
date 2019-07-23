@@ -71,7 +71,7 @@ public class MenuSelection : MonoBehaviour
         if (timeToProceed >= 1.5f)
         {
             //go to race
-            SceneManager.LoadScene("RingLevel1");
+            SceneManager.LoadScene("RingLevel2");
            
 
 
