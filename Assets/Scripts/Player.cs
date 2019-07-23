@@ -355,6 +355,8 @@ public class Player : MonoBehaviour
                 //restore 25% hp
                 currentHealth += maxHealth / 4;
                 other.GetComponent<Pickup>().respawnTimer = 4;
+                if (currentHealth >= maxHealth) { currentHealth = maxHealth; }
+                
             }
         }
         if (other.gameObject.tag == "BoostPickup")
