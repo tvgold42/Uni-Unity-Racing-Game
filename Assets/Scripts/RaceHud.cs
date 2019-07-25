@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RaceHud : MonoBehaviour
 {
@@ -25,8 +26,8 @@ public class RaceHud : MonoBehaviour
         //disable hud if race hasnt started
         if (gameObject.tag == "Hud")
         {
-            if(RaceHandler.racePreview == false && hudRender.enabled == false){ hudRender.enabled = true; }
-            if(RaceHandler.racePreview == true && hudRender.enabled == true) { hudRender.enabled = false; }
+            if(RaceHandler.racePreview == false && hudRender.enabled == false)  { hudRender.enabled = true;  }
+            if(RaceHandler.racePreview == true && hudRender.enabled == true)  { hudRender.enabled = false;  }
         }
 
         //destroy track preview elements
@@ -70,5 +71,6 @@ public class RaceHud : MonoBehaviour
                 boostParticle.Stop();
             }
         }
+
     }
 }

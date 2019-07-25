@@ -52,6 +52,10 @@ public class AIEngine : MonoBehaviour
 
     public int currentPathNode = 0;
 
+    //statistics
+    public float kills;
+    public float deaths;
+
 
     // Start is called before the first frame update
     void Start()
@@ -69,6 +73,9 @@ public class AIEngine : MonoBehaviour
         backupAccel = accel;
         topSpeedBackup = topSpeed;
         ratings = 0;
+        kills = 0;
+        deaths = 0;
+        currentLap = 0;
 
         Transform[] pathLine = AIPath.GetComponentsInChildren<Transform>();
         pathNodes = new List<Transform>();
@@ -90,6 +97,8 @@ public class AIEngine : MonoBehaviour
         Steering();
         Drive();
         CheckNodeDistance();
+        //always round ratings to the nearest whole number
+        Mathf.Round(ratings);
 
         xVelocity = AIRB.velocity.x;
         zVelocity = AIRB.velocity.z;
@@ -125,6 +134,7 @@ public class AIEngine : MonoBehaviour
         if (currentHealth <= 0 && death == false)
         {
             //stop moving, go invisible, spawn explosion prefab
+            deaths += 1;
             death = true;
             respawnTimer = 3;
             AIRB.velocity = Vector3.zero;
@@ -346,12 +356,17 @@ public class AIEngine : MonoBehaviour
             //if death, give attacking vehicle points
             if (other.gameObject.tag == "Vehicle" && gameObject.tag == "Vehicle" && currentHealth <= 0)
             {
-                //give opposing vehicle a quarter of their ratings
+                //give opposing vehicle a quarter of their ratings and 1 kill
                 other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
+                other.gameObject.GetComponent<AIEngine>().kills += 1;
                 ratings *= 0.5f;
             }
             //fodder enemy
-            if (gameObject.tag == "Vehicle Fodder") { other.gameObject.GetComponent<AIEngine>().ratings += 75;}
+            if (gameObject.tag == "Vehicle Fodder")
+            {
+                other.gameObject.GetComponent<AIEngine>().ratings += 75;
+                other.gameObject.GetComponent<AIEngine>().kills += 1;
+            }
 
         }
         if (other.gameObject.tag == "Player" && collideBoostTimer <= 0)
@@ -366,6 +381,7 @@ public class AIEngine : MonoBehaviour
             {
                 //give opposing vehicle a quarter of their ratings
                 other.gameObject.GetComponent<Player>().ratings += ratings / 4;
+                other.gameObject.GetComponent<Player>().kills += 1;
                 ratings *= 0.5f;
             }
             //fodder enemy

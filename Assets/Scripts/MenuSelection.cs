@@ -10,22 +10,26 @@ public class MenuSelection : MonoBehaviour
     public Transform button2;
     public Transform button3;
     public Transform fadeOut;
+    public Transform flash;
+    public Transform loadingScreen;
     public AudioSource buttonAudio;
     public AudioClip buttonMove;
     public AudioClip buttonSelect;
+    public string selectedTrack;
     public int maxButton;
     public int minButton;
-    public int activeButton = 1;
+    public static int activeButton = 1;
     public bool buttonPressed;
     public bool selected = false;
 
-    public float timeToProceed = 0;
+    public static float timeToProceed = 0;
 
 
     // Start is called before the first frame update
     void Start()
     {
         buttonAudio = GetComponent<AudioSource>();
+        timeToProceed = 0;
     }
 
     // Update is called once per frame
@@ -33,23 +37,26 @@ public class MenuSelection : MonoBehaviour
     {
         if(selected == true) { timeToProceed += Time.deltaTime; }
 
-        //moving down menu
-        if (Input.GetAxis("Vertical") <= -0.1f && activeButton < maxButton && buttonPressed == false)
+        if (selected == false)
         {
-            activeButton += 1;
-            buttonPressed = true;
-            buttonAudio.PlayOneShot(buttonMove, 1f);
-        }
-        if (Input.GetAxis("Vertical") >= 0.1f && activeButton > minButton && buttonPressed == false)
-        {
-            activeButton -= 1;
-            buttonPressed = true;
-            buttonAudio.PlayOneShot(buttonMove, 1f);
-        }
-        //detect release of button so that holding a button down doesnt make the cursor go straight to the bottom/top
-        if (Input.GetAxis("Vertical") >= -0.1f && Input.GetAxis("Vertical") <= 0.1f)
-        {
-            buttonPressed = false;
+            //moving down menu
+            if (Input.GetAxis("Vertical") <= -0.1f && activeButton < maxButton && buttonPressed == false)
+            {
+                activeButton += 1;
+                buttonPressed = true;
+                buttonAudio.PlayOneShot(buttonMove, 1f);
+            }
+            if (Input.GetAxis("Vertical") >= 0.1f && activeButton > minButton && buttonPressed == false)
+            {
+                activeButton -= 1;
+                buttonPressed = true;
+                buttonAudio.PlayOneShot(buttonMove, 1f);
+            }
+            //detect release of button so that holding a button down doesnt make the cursor go straight to the bottom/top
+            if (Input.GetAxis("Vertical") >= -0.1f && Input.GetAxis("Vertical") <= 0.1f)
+            {
+                buttonPressed = false;
+            }
         }
 
         //place highlight in front of appropriate button
@@ -63,19 +70,102 @@ public class MenuSelection : MonoBehaviour
         {
             Debug.Log("entered");
             selected = true;
-            Instantiate(fadeOut, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), transform.rotation);
             buttonAudio.PlayOneShot(buttonSelect, 1f);
+          //  if (SceneManager.GetActiveScene().name != "TrackSelect") { Instantiate(fadeOut, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), transform.rotation); }
+
+            //if selecting track and not back button
+            if (SceneManager.GetActiveScene().name == "TrackSelect" && activeButton != maxButton) { Instantiate(flash, new Vector3(transform.position.x, transform.position.y + 2, transform.position.z), transform.rotation);
+                Instantiate(loadingScreen, new Vector3(0, transform.position.y + 1, 0), transform.rotation);
+                if (activeButton == 1) { selectedTrack = "RingLevel2"; }
+                StartCoroutine(SceneLoad());
+                //assign track to selectedTrack and start to load it
+            }
+
+            else
+            Instantiate(fadeOut, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), transform.rotation);
         }
 
         //proceeding to relavent scene
         if (timeToProceed >= 1.5f)
         {
-            //go to race
-            SceneManager.LoadScene("RingLevel2");
-           
+            //get scene and then the selection made
+            //title
+            if (SceneManager.GetActiveScene().name == "Title")
+            {
+                //go to main menu
+                if (activeButton == 1)
+                { SceneManager.LoadScene("MainMenu"); }
+            }
+            //main menu
+            if (SceneManager.GetActiveScene().name == "MainMenu")
+            {
+                //go to vehicle select
+                if (activeButton == 1)
+                { SceneManager.LoadScene("VehicleSelect"); }
+                //options
+                if (activeButton == 2)
+                { SceneManager.LoadScene("VehicleSelect"); }
+                //quit
+                if (activeButton == 3)
+                { Application.Quit(); }
+            }
+            if (SceneManager.GetActiveScene().name == "VehicleSelect")
+            {
+                if (activeButton == 1)
+                {
+                    SceneManager.LoadScene("TrackSelect");
+                    Player.selectedVehicle = 1;
+                }
+                if (activeButton == 2)
+                {
+                    SceneManager.LoadScene("TrackSelect");
+                    Player.selectedVehicle = 2;
+                }
+                if (activeButton == 3)
+                { SceneManager.LoadScene("MainMenu"); }
+            }
+            if (SceneManager.GetActiveScene().name == "TrackSelect")
+            {
+                if (activeButton == 3)
+                { SceneManager.LoadScene("VehicleSelect"); }
+            }
+
+            if (SceneManager.GetActiveScene().name == "Results")
+            {
+                if (activeButton == 1)
+                {
+                    SceneManager.LoadScene("VehicleSelect");
+                }
+            }
 
 
+            //longer hold while levels load
+            if (timeToProceed >= 2f)
+            {
+                if (SceneManager.GetActiveScene().name == "TrackSelect")
+                {
+                    if (activeButton == 1)
+                    {
+                        SceneManager.LoadScene("RingLevel2");
+                    }
+                    if (activeButton == 2)
+                    {
+                        SceneManager.LoadScene("RingLevel2");
+                    }
+                }
+            }
         }
 
+
+    }
+
+
+    //load the selected track while the loading screen is there
+    private IEnumerator SceneLoad()
+    {
+        while (timeToProceed <= 1.5f) {yield return null; }
+
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(selectedTrack);
+        while (!asyncLoad.isDone) { yield return null; }
     }
 }

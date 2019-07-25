@@ -73,7 +73,7 @@ public class CameraMovement : MonoBehaviour
         }
 
         //lock y
-        transform.position = new Vector3(transform.position.x, 67, transform.position.z);
+        transform.position = new Vector3(transform.position.x, 80, transform.position.z);
 
 
     }

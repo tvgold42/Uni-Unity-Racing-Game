@@ -17,4 +17,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RingLevel2.unity
     guid: 224e35b7846d567478a63451a21dd321
+  - enabled: 1
+    path: Assets/Scenes/VehicleSelect.unity
+    guid: 2a4ab798dd546f643801fa33a6f8c61e
+  - enabled: 1
+    path: Assets/Scenes/TrackSelect.unity
+    guid: 2fb7f9988c46a0c468d6ed23a692664c
+  - enabled: 1
+    path: Assets/Scenes/Results.unity
+    guid: 70033d17192496b4593af5bfbf8dadf3
   m_configObjects: {}

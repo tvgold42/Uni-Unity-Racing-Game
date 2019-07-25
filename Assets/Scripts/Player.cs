@@ -59,7 +59,15 @@ public class Player : MonoBehaviour
     public Transform PlayerPath;
     private List<Transform> pathNodes;
     public int currentPathNode = 0;
-    
+
+    //selected vehicle
+    public static int selectedVehicle = 1;
+    public Sprite vehicle1;
+    public Sprite vehicle2;
+
+    //statistics
+    public float kills;
+    public float deaths;
 
 
 
@@ -78,6 +86,8 @@ public class Player : MonoBehaviour
         maxHealth = currentHealth;
         ratings = 0;
         currentLap = 0;
+        kills = 0;
+        deaths = 0;
         Transform[] pathLine = PlayerPath.GetComponentsInChildren<Transform>();
         pathNodes = new List<Transform>();
         //count all the nodes so a lap can be cleared
@@ -88,6 +98,12 @@ public class Player : MonoBehaviour
             {
                 pathNodes.Add(pathLine[i]);
             }
+        }
+
+        //use selected vehicle
+        if (selectedVehicle == 2)
+        {
+            playerRender.sprite = vehicle2;
         }
 
 
@@ -133,6 +149,8 @@ public class Player : MonoBehaviour
         playerZ = gameObject.transform.position.z;
         xVelocity = playerRB.velocity.x;
         zVelocity = playerRB.velocity.z;
+        //always round ratings to the nearest whole number
+        Mathf.Round(ratings);
 
         //health regen cooldown
         healthCooldown -= Time.deltaTime;
@@ -341,7 +359,7 @@ public class Player : MonoBehaviour
             CameraMovement.shake_intensity = 0.5f;
             CameraMovement.shake_decay = 0.005f;
             //change volume accordingly
-            playerSound.volume = 0.2f;
+          //  playerSound.volume = 0.2f;
             playerSound.PlayOneShot(boostSound, 1f);
             collideBoostTimer = 0.7f;
 
@@ -412,8 +430,10 @@ public class Player : MonoBehaviour
                 {
                     if (other.gameObject.tag == "Vehicle")
                     {
-                        //give opposing vehicle a quarter of their ratings
+                        //give opposing vehicle a quarter of their ratings and 1 kill
                         other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
+                        other.gameObject.GetComponent<AIEngine>().kills += 1;
+                        deaths += 1;
 
                     }
                     ratings *= 0.5f;
@@ -423,7 +443,7 @@ public class Player : MonoBehaviour
             {
                 //positive collision
                 Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
-                playerSound.volume = 0.2f;
+               // playerSound.volume = 0.2f;
                 playerSound.PlayOneShot(tussleSoundGood, 1f);
             }
         }
