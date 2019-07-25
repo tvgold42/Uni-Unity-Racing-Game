@@ -77,6 +77,7 @@ public class MenuSelection : MonoBehaviour
             if (SceneManager.GetActiveScene().name == "TrackSelect" && activeButton != maxButton) { Instantiate(flash, new Vector3(transform.position.x, transform.position.y + 2, transform.position.z), transform.rotation);
                 Instantiate(loadingScreen, new Vector3(0, transform.position.y + 1, 0), transform.rotation);
                 if (activeButton == 1) { selectedTrack = "RingLevel2"; }
+                if (activeButton == 2) { selectedTrack = "RingLevel3"; }
                 StartCoroutine(SceneLoad());
                 //assign track to selectedTrack and start to load it
             }
@@ -140,7 +141,7 @@ public class MenuSelection : MonoBehaviour
 
 
             //longer hold while levels load
-            if (timeToProceed >= 2f)
+            if (timeToProceed >= 5f)
             {
                 if (SceneManager.GetActiveScene().name == "TrackSelect")
                 {
@@ -150,7 +151,7 @@ public class MenuSelection : MonoBehaviour
                     }
                     if (activeButton == 2)
                     {
-                        SceneManager.LoadScene("RingLevel2");
+                        SceneManager.LoadScene("RingLevel3");
                     }
                 }
             }
@@ -163,7 +164,7 @@ public class MenuSelection : MonoBehaviour
     //load the selected track while the loading screen is there
     private IEnumerator SceneLoad()
     {
-        while (timeToProceed <= 1.5f) {yield return null; }
+        while (timeToProceed <= 5f) {yield return null; }
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(selectedTrack);
         while (!asyncLoad.isDone) { yield return null; }

@@ -12,7 +12,7 @@ public class MusicHandlerMenu : MonoBehaviour
         menuAudio = GetComponent<AudioSource>();
         //dont destroy this object if on any menu scene
         //or just check if its not on any race track
-        if (SceneManager.GetActiveScene().name != "RingLevel2")
+        if (SceneManager.GetActiveScene().name != "RingLevel2" && SceneManager.GetActiveScene().name != "RingLevel3")
         {
             DontDestroyOnLoad(this.gameObject);
         }
@@ -28,7 +28,7 @@ public class MusicHandlerMenu : MonoBehaviour
             Debug.Log("fading out music");
         }
         //destory object if not on the menus anymore
-        if (SceneManager.GetActiveScene().name == "RingLevel2")
+        if (SceneManager.GetActiveScene().name == "RingLevel2" || SceneManager.GetActiveScene().name == "RingLevel3")
         {
             Debug.Log("music handler gone");
             Destroy(gameObject);

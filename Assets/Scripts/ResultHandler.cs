@@ -44,6 +44,10 @@ public class ResultHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (racerPlayer == null)
+        {
+            Destroy(gameObject);
+        }
         //destory object if out of results
         if (SceneManager.GetActiveScene().name == "VehicleSelect")
         {

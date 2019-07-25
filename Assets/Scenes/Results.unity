@@ -2043,7 +2043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button1: {fileID: 108031514}
-  button2: {fileID: 0}
+  button2: {fileID: 108031514}
   button3: {fileID: 108031514}
   fadeOut: {fileID: 8282529011943904721, guid: 05311a3fd60b28a48a23bd62e4181cad, type: 3}
   flash: {fileID: 0}
@@ -3269,7 +3269,7 @@ PrefabInstance:
     - target: {fileID: 6663502802963400222, guid: 842fe112adea7fa4d887f6c68d0b5a3f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6663502802963400219, guid: 842fe112adea7fa4d887f6c68d0b5a3f,
         type: 3}
