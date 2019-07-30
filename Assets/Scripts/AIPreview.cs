@@ -69,18 +69,6 @@ public class AIPreview : MonoBehaviour
             collideBoostTimer -= Time.deltaTime;
         }
 
-        //sprite size increase
-        if (AIPos.localScale.x <= initialSize)
-        {
-            AIPos.localScale = new Vector3(initialSize, initialSize, initialSize);
-        }
-        if (AIPos.localScale.x >= initialSize)
-        {
-            if (AIPos.position.y >= 2)
-            {
-                AIPos.localScale = new Vector3(AIPos.position.y / 1.3f, AIPos.position.y / 1.3f, initialSize);
-            }
-        }
         //limit max scale
         if (AIPos.localScale.x >= 5)
         {
@@ -92,7 +80,7 @@ public class AIPreview : MonoBehaviour
     private void CheckNodeDistance()
     {
         //check if close enough to node to confirm progress through track
-        if (Vector3.Distance(transform.position, pathNodes[currentPathNode].position) <= 18f)
+        if (Vector3.Distance(transform.position, pathNodes[currentPathNode].position) <= 25f)
         {
             //confirm node is passed and set target to next node
             if (currentPathNode == pathNodes.Count - 1)
