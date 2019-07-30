@@ -204,19 +204,24 @@ public class Player : MonoBehaviour
         //disable controls if race hasnt started
         if (RaceHandler.raceStarted == true && death == false)
         {
+            if (!Input.GetKey("left") && !Input.GetKey("right"))
+            {
+                angle += h * 3;
+                angle += Input.GetAxis("Horizontal");
+            }
             //keyboard
             if (Input.GetKey("left"))
             {
-                angle += Time.deltaTime * 75 + (h * 1.5f);
+                angle += Time.deltaTime * 50 + (h * 0.5f);
+            }
+            if (Input.GetKey("right"))
+            {
+                angle -= Time.deltaTime * 50 - (h * 0.5f);
             }
             //controller
             if (Input.GetAxis("Horizontal") < -0.3)
             {
                 angle += Time.deltaTime * 2 + (Input.GetAxis("Horizontal") * -5);
-            }
-            if (Input.GetKey("right"))
-            {
-                angle -= Time.deltaTime * 75 - (h * 1.5f);
             }
             if (Input.GetAxis("Horizontal") > 0.3)
             {
