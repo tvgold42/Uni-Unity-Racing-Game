@@ -56,10 +56,16 @@ public class Player : MonoBehaviour
 
     //path finding
     public float currentLap;
-    public float currentCheckPoint;
     public Transform PlayerPath;
     private List<Transform> pathNodes;
     public int currentPathNode = 0;
+
+    //position tracking
+    public int placement;
+    public GameObject opponent1;
+    public GameObject opponent2;
+    public GameObject opponent3;
+    public GameObject opponent4;
 
     //selected vehicle
     public static int selectedVehicle = 1;
@@ -121,13 +127,12 @@ public class Player : MonoBehaviour
             {
                 //new lap if at last node
                 currentPathNode = 0;
-                currentCheckPoint = 0;
 
             }
             else
             {
                 //if crossing the first point, increase lap count by 1
-                if (currentCheckPoint == 0)
+                if (currentPathNode == 0)
                 {
                     currentLap++;
                     //get points
@@ -135,7 +140,6 @@ public class Player : MonoBehaviour
                 }
                 //if not at end, go to next node
                 currentPathNode++;
-                currentCheckPoint++;
 
             }
         }
@@ -362,6 +366,49 @@ public class Player : MonoBehaviour
 
         transform.eulerAngles = new Vector3(90, transform.rotation.y, angle);
 
+
+        //placement tracking
+        //compare lap and checkpoint with each opponent racer
+        //if ahead of the racer, move up one place and move them down one place
+        if (currentLap <= 3)
+        {
+            //opponent1
+            if (currentLap >= opponent1.GetComponent<AIEngine>().currentLap && currentPathNode > opponent1.GetComponent<AIEngine>().currentPathNode)
+            {
+                if (opponent1.GetComponent<AIEngine>().placement <= placement)
+                {
+                    placement -= 1;
+                    opponent1.GetComponent<AIEngine>().placement += 1;
+                }
+            }
+            //opponent2
+            if (currentLap >= opponent2.GetComponent<AIEngine>().currentLap && currentPathNode > opponent2.GetComponent<AIEngine>().currentPathNode)
+            {
+                if (opponent2.GetComponent<AIEngine>().placement <= placement)
+                {
+                    placement -= 1;
+                    opponent2.GetComponent<AIEngine>().placement += 1;
+                }
+            }
+            //opponent3
+            if (currentLap >= opponent3.GetComponent<AIEngine>().currentLap && currentPathNode > opponent3.GetComponent<AIEngine>().currentPathNode)
+            {
+                if (opponent3.GetComponent<AIEngine>().placement <= placement)
+                {
+                    placement -= 1;
+                    opponent3.GetComponent<AIEngine>().placement += 1;
+                }
+            }
+            //opponent4
+            if (currentLap >= opponent4.GetComponent<AIEngine>().currentLap && currentPathNode > opponent4.GetComponent<AIEngine>().currentPathNode)
+            {
+                if (opponent4.GetComponent<AIEngine>().placement <= placement)
+                {
+                    placement -= 1;
+                    opponent4.GetComponent<AIEngine>().placement += 1;
+                }
+            }
+        }
     }
 
 

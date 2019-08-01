@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RingLevel old.unity
     guid: 690b2fae111b3e641901c3094067c2a7
+  - enabled: 1
+    path: Assets/Scenes/RingLevel3.unity
+    guid: ec11be028e0e3224d8f48bf9cf283955
   m_configObjects: {}

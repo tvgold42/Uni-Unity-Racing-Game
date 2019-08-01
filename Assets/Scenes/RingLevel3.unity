@@ -7020,7 +7020,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &560491802
 Transform:
   m_ObjectHideFlags: 0
@@ -17411,8 +17411,8 @@ Transform:
   - {fileID: 560809069}
   - {fileID: 13693703}
   - {fileID: 1454932690}
-  - {fileID: 935773713}
   - {fileID: 1646497389}
+  - {fileID: 935773713}
   - {fileID: 1642573135}
   - {fileID: 543674643}
   m_Father: {fileID: 0}
@@ -21020,6 +21020,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4416406667620525535, guid: aad64d80d2e5c444e98f83e41767efe8,
         type: 3}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: placement
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent2
+      value: 
+      objectReference: {fileID: 321123217}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent3
+      value: 
+      objectReference: {fileID: 564314409}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent4
+      value: 
+      objectReference: {fileID: 1584133963}
     - target: {fileID: 484992095345036767, guid: 72f729770692f9e4380c424dc2d93c1a,
         type: 3}
       propertyPath: m_Parameters.colorGradient.key1.g
@@ -23677,7 +23697,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1420449773
 Transform:
   m_ObjectHideFlags: 0
@@ -26163,6 +26183,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4416406667620525535, guid: aad64d80d2e5c444e98f83e41767efe8,
         type: 3}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: placement
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent2
+      value: 
+      objectReference: {fileID: 321123217}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent3
+      value: 
+      objectReference: {fileID: 1448360562}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent4
+      value: 
+      objectReference: {fileID: 1584133963}
     - target: {fileID: 484992095345036767, guid: 72f729770692f9e4380c424dc2d93c1a,
         type: 3}
       propertyPath: m_Parameters.colorGradient.key1.g
@@ -28047,7 +28087,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1763953952
 Transform:
   m_ObjectHideFlags: 0
@@ -31573,6 +31613,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4416406667620525535, guid: aad64d80d2e5c444e98f83e41767efe8,
         type: 3}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: placement
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent2
+      value: 
+      objectReference: {fileID: 321123217}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent3
+      value: 
+      objectReference: {fileID: 564314409}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent4
+      value: 
+      objectReference: {fileID: 1448360562}
     - target: {fileID: 484992095345036767, guid: 72f729770692f9e4380c424dc2d93c1a,
         type: 3}
       propertyPath: m_Parameters.colorGradient.key1.g
@@ -33970,8 +34030,28 @@ PrefabInstance:
     - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
         type: 3}
       propertyPath: accel
-      value: 250
+      value: 300
       objectReference: {fileID: 0}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: placement
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent2
+      value: 
+      objectReference: {fileID: 564314409}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent3
+      value: 
+      objectReference: {fileID: 1448360562}
+    - target: {fileID: 484992095934418601, guid: 72f729770692f9e4380c424dc2d93c1a,
+        type: 3}
+      propertyPath: opponent4
+      value: 
+      objectReference: {fileID: 1584133963}
     - target: {fileID: 484992095345036767, guid: 72f729770692f9e4380c424dc2d93c1a,
         type: 3}
       propertyPath: m_SortingOrder
@@ -34806,6 +34886,31 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: f2546751cc058244ba84a6c044830132,
         type: 3}
+    - target: {fileID: 5947979960792749722, guid: d5b6f5202e5092146b87fda1b0220d93,
+        type: 3}
+      propertyPath: placement
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5947979960792749722, guid: d5b6f5202e5092146b87fda1b0220d93,
+        type: 3}
+      propertyPath: opponent1
+      value: 
+      objectReference: {fileID: 321123217}
+    - target: {fileID: 5947979960792749722, guid: d5b6f5202e5092146b87fda1b0220d93,
+        type: 3}
+      propertyPath: opponent2
+      value: 
+      objectReference: {fileID: 564314409}
+    - target: {fileID: 5947979960792749722, guid: d5b6f5202e5092146b87fda1b0220d93,
+        type: 3}
+      propertyPath: opponent3
+      value: 
+      objectReference: {fileID: 1448360562}
+    - target: {fileID: 5947979960792749722, guid: d5b6f5202e5092146b87fda1b0220d93,
+        type: 3}
+      propertyPath: opponent4
+      value: 
+      objectReference: {fileID: 1584133963}
     - target: {fileID: 5947979961043053735, guid: d5b6f5202e5092146b87fda1b0220d93,
         type: 3}
       propertyPath: m_LocalPosition.y
