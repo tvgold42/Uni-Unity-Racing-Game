@@ -38,6 +38,7 @@ public class AIEngine : MonoBehaviour
     public float ratings = 0;
 
     public bool death = false;
+    public bool fallingDeath = false;
     public float respawnTimer = 2;
     public float respawnInvuln = 0;
 
@@ -157,6 +158,15 @@ public class AIEngine : MonoBehaviour
         }
         if (death == true && respawnTimer <= 0)
         {
+            //respawn at location of checkpoint if fallen off track
+            if (fallingDeath == true)
+            {
+                fallingDeath = false;
+                if (currentPathNode > 0)
+                { transform.position = pathNodes[currentPathNode - 1].position; }
+                if (currentPathNode == 0)
+                { transform.position = pathNodes[currentPathNode].position; }
+            }
             Debug.Log("Respawned AI");
             death = false;
             AICol.enabled = true;
@@ -216,6 +226,11 @@ public class AIEngine : MonoBehaviour
             maxSteerAngle = oldSteerAngle;
         }
 
+        //cant boost if in front of player
+        if (currentPathNode >= playerPos.GetComponent<Player>().currentPathNode || currentLap > playerPos.GetComponent<Player>().currentLap)
+        {
+            boostCoolDown = 3; ;
+        }
         //boosting
         if (RaceHandler.raceStarted == true && gameObject.tag != "Vehicle Fodder")
         {
@@ -338,6 +353,16 @@ public class AIEngine : MonoBehaviour
                 other.GetComponent<Pickup>().respawnTimer = 4;
             }
         }
+
+        if (other.gameObject.tag == "KillGrid" && fallingDeath == false)
+        {
+            //kill the ai instantly
+            deaths += 1;
+            ratings *= 0.5f;
+            currentHealth -= 1000;
+            fallingDeath = true;
+        }
+
 
     }
 

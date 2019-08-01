@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
     public float ratings = 0;
 
     private bool death = false;
+    private bool fallingDeath = false;
     private float respawnTimer = 2;
     private float respawnInvuln = 0;
     private bool engineActive = false;
@@ -281,7 +282,9 @@ public class Player : MonoBehaviour
             if (fuelBoosting == false) { accel = 330; boostCooldown -= Time.deltaTime; }
 
             //regen boost when boost cooldown over
-            if(boostCooldown <= 0 && fuelLeft <= 5){fuelLeft += Time.deltaTime / 2;}
+            //no regen rn
+            //if(boostCooldown <= 0 && fuelLeft <= 5){fuelLeft += Time.deltaTime / 2;}
+
             //keep fuel at cap
             if(fuelLeft >= 10) { fuelLeft = 10; }
         }
@@ -311,12 +314,21 @@ public class Player : MonoBehaviour
         }
         if (death == true && respawnTimer <= 0)
         {
+            //respawn at location of checkpoint if fallen off track
+            if (fallingDeath == true)
+            {
+                fallingDeath = false;
+                if (currentPathNode > 0)
+                { transform.position = pathNodes[currentPathNode - 1].position; }
+                if (currentPathNode == 0)
+                { transform.position = pathNodes[currentPathNode].position; }
+            }
             Debug.Log("Respawned Player");
             death = false;
             playerCol.enabled = true;
             playerRender.enabled = true;
             respawnInvuln = 3;
-            currentHealth = maxHealth;
+            currentHealth = maxHealth;         
         }
 
         if (respawnInvuln >= 0)
@@ -361,12 +373,18 @@ public class Player : MonoBehaviour
             playerRB.AddForce(transform.up * 800 * 20f);
             Instantiate(boostEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), transform.rotation);
             CameraMovement.originPosition = transform.position;
-            CameraMovement.shake_intensity = 0.5f;
+            CameraMovement.shake_intensity = 1f;
             CameraMovement.shake_decay = 0.005f;
             //change volume accordingly
           //  playerSound.volume = 0.2f;
             playerSound.PlayOneShot(boostSound, 1f);
             collideBoostTimer = 0.7f;
+        }
+
+        if (other.gameObject.tag == "ShortcutTrigger")
+        {
+            Debug.Log("shortcut");
+            if (currentPathNode >= 17) { currentPathNode = 25; }
 
         }
 
@@ -390,6 +408,15 @@ public class Player : MonoBehaviour
                 fuelLeft += 5;
                 other.GetComponent<Pickup>().respawnTimer = 4;
             }
+        }
+
+        if (other.gameObject.tag == "KillGrid" && fallingDeath == false)
+        {
+                //kill the player instantly
+                deaths += 1;
+                ratings *= 0.5f;
+                currentHealth -= 1000;
+                fallingDeath = true;
         }
 
 

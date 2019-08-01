@@ -60,7 +60,7 @@ public class CameraMovement : MonoBehaviour
 
         if (shake_intensity > 0 && target.GetComponent<Player>().fuelBoosting == false)
         {
-            transform.position = originPosition + Random.insideUnitSphere * shake_intensity * 2;
+            transform.position  += Random.insideUnitSphere * shake_intensity * 2;
 
             shake_intensity -= Time.deltaTime * 2f;
         }

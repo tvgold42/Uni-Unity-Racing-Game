@@ -12,6 +12,8 @@ TagManager:
   - Vehicle Fodder
   - HealthPickup
   - BoostPickup
+  - KillGrid
+  - ShortcutTrigger
   layers:
   - Default
   - TransparentFX
