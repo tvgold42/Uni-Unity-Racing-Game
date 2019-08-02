@@ -464,7 +464,15 @@ public class Player : MonoBehaviour
                 ratings *= 0.5f;
                 currentHealth -= 1000;
                 fallingDeath = true;
-        }
+                //prevent massive screen shake glitch
+                if (fuelBoosting == true)
+                {
+                    fuelBoosting = false;
+                    CameraMovement.shake_intensity = 0f;
+                    CameraMovement.originPosition = transform.position;
+                    fuelLeft = 0;
+                }
+            }
 
 
     }

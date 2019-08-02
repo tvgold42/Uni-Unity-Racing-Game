@@ -238,7 +238,10 @@ public class AIEngine : MonoBehaviour
         //cant boost if in front of player
         if (currentPathNode >= playerPos.GetComponent<Player>().currentPathNode || currentLap > playerPos.GetComponent<Player>().currentLap)
         {
-            boostCoolDown = 3; ;
+            if (boosting == false)
+            {
+                boostCoolDown = 3;
+            }
         }
         //boosting
         if (RaceHandler.raceStarted == true && gameObject.tag != "Vehicle Fodder")
@@ -269,6 +272,52 @@ public class AIEngine : MonoBehaviour
         {
             accel = backupAccel;
             topSpeed = topSpeedBackup;
+        }
+
+
+
+        //placement tracking
+        //compare lap and checkpoint with each opponent racer
+        //if ahead of the racer, move up one place and move them down one place
+        //only be able to change position while they havent completed the third lap
+        if (currentLap <= 3)
+        {
+            //opponent1
+            if (currentLap >= playerPos.GetComponent<Player>().currentLap && currentPathNode > playerPos.GetComponent<Player>().currentPathNode)
+            {
+                if (playerPos.GetComponent<Player>().placement <= placement)
+                {
+                    placement -= 1;
+                    playerPos.GetComponent<Player>().placement += 1;
+                }
+            }
+            //opponent2
+            if (currentLap >= opponent2.GetComponent<AIEngine>().currentLap && currentPathNode > opponent2.GetComponent<AIEngine>().currentPathNode)
+            {
+                if (opponent2.GetComponent<AIEngine>().placement <= placement)
+                {
+                    placement -= 1;
+                    opponent2.GetComponent<AIEngine>().placement += 1;
+                }
+            }
+            //opponent3
+            if (currentLap >= opponent3.GetComponent<AIEngine>().currentLap && currentPathNode > opponent3.GetComponent<AIEngine>().currentPathNode)
+            {
+                if (opponent3.GetComponent<AIEngine>().placement <= placement)
+                {
+                    placement -= 1;
+                    opponent3.GetComponent<AIEngine>().placement += 1;
+                }
+            }
+            //opponent4
+            if (currentLap >= opponent4.GetComponent<AIEngine>().currentLap && currentPathNode > opponent4.GetComponent<AIEngine>().currentPathNode)
+            {
+                if (opponent4.GetComponent<AIEngine>().placement <= placement)
+                {
+                    placement -= 1;
+                    opponent4.GetComponent<AIEngine>().placement += 1;
+                }
+            }
         }
 
     }
@@ -370,54 +419,11 @@ public class AIEngine : MonoBehaviour
             ratings *= 0.5f;
             currentHealth -= 1000;
             fallingDeath = true;
+            boosting = false;
         }
 
 
 
-
-        //placement tracking
-        //compare lap and checkpoint with each opponent racer
-        //if ahead of the racer, move up one place and move them down one place
-        //only be able to change position while they havent completed the third lap
-        if (currentLap <= 3)
-        {
-            //opponent1
-            if (currentLap >= playerPos.GetComponent<Player>().currentLap && currentPathNode > playerPos.GetComponent<Player>().currentPathNode)
-            {
-                if (playerPos.GetComponent<Player>().placement <= placement)
-                {
-                    placement -= 1;
-                    playerPos.GetComponent<Player>().placement += 1;
-                }
-            }
-            //opponent2
-            if (currentLap >= opponent2.GetComponent<AIEngine>().currentLap && currentPathNode > opponent2.GetComponent<AIEngine>().currentPathNode)
-            {
-                if (opponent2.GetComponent<AIEngine>().placement <= placement)
-                {
-                    placement -= 1;
-                    opponent2.GetComponent<AIEngine>().placement += 1;
-                }
-            }
-            //opponent3
-            if (currentLap >= opponent3.GetComponent<AIEngine>().currentLap && currentPathNode > opponent3.GetComponent<AIEngine>().currentPathNode)
-            {
-                if (opponent3.GetComponent<AIEngine>().placement <= placement)
-                {
-                    placement -= 1;
-                    opponent3.GetComponent<AIEngine>().placement += 1;
-                }
-            }
-            //opponent4
-            if (currentLap >= opponent4.GetComponent<AIEngine>().currentLap && currentPathNode > opponent4.GetComponent<AIEngine>().currentPathNode)
-            {
-                if (opponent4.GetComponent<AIEngine>().placement <= placement)
-                {
-                    placement -= 1;
-                    opponent4.GetComponent<AIEngine>().placement += 1;
-                }
-            }
-        }
     }
 
     void OnCollisionEnter(Collision other)
