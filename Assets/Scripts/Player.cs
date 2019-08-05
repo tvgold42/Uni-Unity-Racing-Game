@@ -409,6 +409,11 @@ public class Player : MonoBehaviour
                 }
             }
         }
+        //end race once player reaches lap 4
+        if (currentLap == 4 && racehandler.GetComponent<RaceHandler>().timeLeft > 0)
+        {
+            racehandler.GetComponent<RaceHandler>().timeLeft = 0;
+        }
     }
 
 
@@ -443,6 +448,7 @@ public class Player : MonoBehaviour
                 //restore 25% hp
                 currentHealth += maxHealth / 4;
                 other.GetComponent<Pickup>().respawnTimer = 4;
+                other.GetComponent<Pickup>().playSound = true;
                 if (currentHealth >= maxHealth) { currentHealth = maxHealth; }
                 
             }
@@ -454,6 +460,7 @@ public class Player : MonoBehaviour
                 //restore 50% fuel
                 fuelLeft += 5;
                 other.GetComponent<Pickup>().respawnTimer = 4;
+                other.GetComponent<Pickup>().playSound = true;
             }
         }
 
