@@ -9,6 +9,7 @@ public class RaceHudTime : MonoBehaviour
     public Text hudText;
     public GameObject raceHandler;
     private double privateTime;
+    public GameObject playerObject;
 
     void Start()
     {
@@ -23,5 +24,6 @@ public class RaceHudTime : MonoBehaviour
 
         //timer
         if (gameObject.name == "HudTime") { hudText.text = privateTime.ToString(); }
+        if (gameObject.name == "HudPlacement" && RaceHandler.raceStarted == true) { hudText.text = playerObject.GetComponent<Player>().placement.ToString(); }
     }
 }

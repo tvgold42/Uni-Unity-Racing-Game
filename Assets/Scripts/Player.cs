@@ -38,8 +38,8 @@ public class Player : MonoBehaviour
 
     public float maxHealth;
     public float currentHealth;
-    private float healthCooldown;
-    public float ratings = 0;
+  //  private float healthCooldown;
+    public int ratings = 0;
 
     private bool death = false;
     private bool fallingDeath = false;
@@ -73,8 +73,8 @@ public class Player : MonoBehaviour
     public Sprite vehicle2;
 
     //statistics
-    public float kills;
-    public float deaths;
+    public int kills;
+    public int deaths;
 
 
 
@@ -157,12 +157,14 @@ public class Player : MonoBehaviour
         //always round ratings to the nearest whole number
         Mathf.Round(ratings);
 
-        //health regen cooldown
+        //health regen cooldown, currently disabled
+        /*
         healthCooldown -= Time.deltaTime;
         if (healthCooldown <= 0 && currentHealth <= maxHealth && death == false)
         {
             currentHealth += Time.deltaTime / 3;
         }
+        */
         if (currentHealth <= 0) { currentHealth = 0; }
 
         if (transform.position.y >= yPositionCap)
@@ -370,39 +372,39 @@ public class Player : MonoBehaviour
         //placement tracking
         //compare lap and checkpoint with each opponent racer
         //if ahead of the racer, move up one place and move them down one place
-        if (currentLap <= 3)
+        if (currentLap <= 5 && currentPathNode != 0 && currentPathNode != pathNodes.Count)
         {
             //opponent1
-            if (currentLap >= opponent1.GetComponent<AIEngine>().currentLap && currentPathNode > opponent1.GetComponent<AIEngine>().currentPathNode)
+            if ((currentLap > opponent1.GetComponent<AIEngine>().currentLap) || currentLap == opponent1.GetComponent<AIEngine>().currentLap && currentPathNode > opponent1.GetComponent<AIEngine>().currentPathNode)
             {
-                if (opponent1.GetComponent<AIEngine>().placement <= placement)
+                if (opponent1.GetComponent<AIEngine>().placement <= placement && opponent1.GetComponent<AIEngine>().currentPathNode != 0)
                 {
                     placement -= 1;
                     opponent1.GetComponent<AIEngine>().placement += 1;
                 }
             }
             //opponent2
-            if (currentLap >= opponent2.GetComponent<AIEngine>().currentLap && currentPathNode > opponent2.GetComponent<AIEngine>().currentPathNode)
+            if ((currentLap >= opponent2.GetComponent<AIEngine>().currentLap) || currentLap > opponent2.GetComponent<AIEngine>().currentLap && currentPathNode > opponent2.GetComponent<AIEngine>().currentPathNode)
             {
-                if (opponent2.GetComponent<AIEngine>().placement <= placement)
+                if (opponent2.GetComponent<AIEngine>().placement <= placement && opponent2.GetComponent<AIEngine>().currentPathNode != 0)
                 {
                     placement -= 1;
                     opponent2.GetComponent<AIEngine>().placement += 1;
                 }
             }
             //opponent3
-            if (currentLap >= opponent3.GetComponent<AIEngine>().currentLap && currentPathNode > opponent3.GetComponent<AIEngine>().currentPathNode)
+            if ((currentLap >= opponent3.GetComponent<AIEngine>().currentLap) || currentLap > opponent3.GetComponent<AIEngine>().currentLap && currentPathNode > opponent3.GetComponent<AIEngine>().currentPathNode )
             {
-                if (opponent3.GetComponent<AIEngine>().placement <= placement)
+                if (opponent3.GetComponent<AIEngine>().placement <= placement && opponent3.GetComponent<AIEngine>().currentPathNode != 0)
                 {
                     placement -= 1;
                     opponent3.GetComponent<AIEngine>().placement += 1;
                 }
             }
             //opponent4
-            if (currentLap >= opponent4.GetComponent<AIEngine>().currentLap && currentPathNode > opponent4.GetComponent<AIEngine>().currentPathNode)
+            if ((currentLap >= opponent4.GetComponent<AIEngine>().currentLap) || currentLap > opponent4.GetComponent<AIEngine>().currentLap && currentPathNode > opponent4.GetComponent<AIEngine>().currentPathNode)
             {
-                if (opponent4.GetComponent<AIEngine>().placement <= placement)
+                if (opponent4.GetComponent<AIEngine>().placement <= placement && opponent4.GetComponent<AIEngine>().currentPathNode != 0)
                 {
                     placement -= 1;
                     opponent4.GetComponent<AIEngine>().placement += 1;
@@ -445,8 +447,8 @@ public class Player : MonoBehaviour
         {
             if (other.GetComponent<Pickup>().pickupAble == true && currentHealth < maxHealth)
             {
-                //restore 25% hp
-                currentHealth += maxHealth / 4;
+                //restore 20% hp
+                currentHealth += maxHealth / 5;
                 other.GetComponent<Pickup>().respawnTimer = 4;
                 other.GetComponent<Pickup>().playSound = true;
                 if (currentHealth >= maxHealth) { currentHealth = maxHealth; }
@@ -457,8 +459,8 @@ public class Player : MonoBehaviour
         {
             if (other.GetComponent<Pickup>().pickupAble == true && fuelLeft < 10)
             {
-                //restore 50% fuel
-                fuelLeft += 5;
+                //restore 25% fuel
+                fuelLeft += 2.5f;
                 other.GetComponent<Pickup>().respawnTimer = 4;
                 other.GetComponent<Pickup>().playSound = true;
             }
@@ -468,7 +470,7 @@ public class Player : MonoBehaviour
         {
                 //kill the player instantly
                 deaths += 1;
-                ratings *= 0.5f;
+                ratings /= 2;
                 currentHealth -= 1000;
                 fallingDeath = true;
                 //prevent massive screen shake glitch
@@ -494,17 +496,15 @@ public class Player : MonoBehaviour
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 0.3f;
             CameraMovement.shake_decay = 0.005f;
-            collideBoostTimer = 0.7f;
         }
 
         //colliding with other vehicle
-        if ((other.gameObject.tag == "Vehicle" || other.gameObject.tag == "Vehicle Fodder") && collideBoostTimer <= 0)
+        if ((other.gameObject.tag == "Vehicle") && collideBoostTimer <= 0)
         {
             other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f,1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
             //poomf effect
             Debug.Log("Collision with vehicle " + other.gameObject.name);
 
-            collideBoostTimer = 0.7f;
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity += 0.3f;
             CameraMovement.shake_decay = 0.005f;
@@ -518,7 +518,7 @@ public class Player : MonoBehaviour
                 //only lose health if not just respawned
                 if (respawnInvuln <= 0)
                 { currentHealth -= 4.5f;
-                  healthCooldown = 2; }
+                  /*healthCooldown = 2;*/ }
                 playerSound.PlayOneShot(tussleSoundBad, 1f);
                 if (currentHealth <= 0)
                 {
@@ -530,7 +530,7 @@ public class Player : MonoBehaviour
                         deaths += 1;
 
                     }
-                    ratings *= 0.5f;
+                    ratings /= 2;
                 }
             }
             if (fuelBoosting == true)
@@ -540,6 +540,7 @@ public class Player : MonoBehaviour
                // playerSound.volume = 0.2f;
                 playerSound.PlayOneShot(tussleSoundGood, 1f);
             }
+            collideBoostTimer = 0.3f;
         }
     }
 }

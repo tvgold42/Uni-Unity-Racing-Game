@@ -26,8 +26,8 @@ public class ResultText : MonoBehaviour
         {
             myText.text = resultHandler.GetComponent<ResultHandler>().racerAI1Stats[0].ToString()
             + "            " + resultHandler.GetComponent<ResultHandler>().racerAI1Stats[1].ToString()
-            +"              " + resultHandler.GetComponent<ResultHandler>().racerAI1Stats[2].ToString()
-            +"              " + resultHandler.GetComponent<ResultHandler>().racerAI1Stats[3].ToString();
+            +"             " + resultHandler.GetComponent<ResultHandler>().racerAI1Stats[2].ToString()
+            +"             " + resultHandler.GetComponent<ResultHandler>().racerAI1Stats[3].ToString();
         }
         if (gameObject.name == "AIStats2")
         {

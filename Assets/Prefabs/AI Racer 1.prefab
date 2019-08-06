@@ -550,6 +550,8 @@ MonoBehaviour:
   AIRB: {fileID: 0}
   AIWheel: {fileID: 484992094574875727}
   AIWheel2: {fileID: 484992094896392488}
+  AIRender: {fileID: 0}
+  AICol: {fileID: 0}
   maxSteerAngle: 6
   topSpeed: 500
   topSpeedBackup: 0
@@ -568,12 +570,25 @@ MonoBehaviour:
   swerveAngle: 0
   maxHealth: 0
   currentHealth: 0
+  ratings: 0
+  death: 0
+  fallingDeath: 0
+  respawnTimer: 2
+  respawnInvuln: 0
   currentLap: 0
   currentCheckPoint: 0
   boostEffect: {fileID: 5072879632593295448, guid: fcf36a9c826e5ba41b2c8dcab5b3abbd,
     type: 3}
   landEffect: {fileID: 3139651131382236627, guid: 71c4197c6e9d63c4a9e0a30d239bbeb4,
     type: 3}
+  explosionEffect: {fileID: 0}
+  currentPathNode: 0
+  placement: 0
+  opponent2: {fileID: 0}
+  opponent3: {fileID: 0}
+  opponent4: {fileID: 0}
+  kills: 0
+  deaths: 0
 --- !u!1 &484992096210212639
 GameObject:
   m_ObjectHideFlags: 0

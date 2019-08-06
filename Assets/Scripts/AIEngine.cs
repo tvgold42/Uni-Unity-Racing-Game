@@ -35,7 +35,7 @@ public class AIEngine : MonoBehaviour
 
     public float maxHealth;
     public float currentHealth;
-    public float ratings = 0;
+    public int ratings = 0;
 
     public bool death = false;
     public bool fallingDeath = false;
@@ -280,39 +280,39 @@ public class AIEngine : MonoBehaviour
         //compare lap and checkpoint with each opponent racer
         //if ahead of the racer, move up one place and move them down one place
         //only be able to change position while they havent completed the third lap
-        if (currentLap <= 3)
+        if (currentLap <= 5 && currentPathNode != 0 && currentPathNode != pathNodes.Count)
         {
             //opponent1
-            if (currentLap >= playerPos.GetComponent<Player>().currentLap && currentPathNode > playerPos.GetComponent<Player>().currentPathNode)
+            if ((currentLap > playerPos.GetComponent<Player>().currentLap) || currentLap == playerPos.GetComponent<Player>().currentLap && currentPathNode > playerPos.GetComponent<Player>().currentPathNode)
             {
-                if (playerPos.GetComponent<Player>().placement <= placement)
+                if (playerPos.GetComponent<Player>().placement <= placement && playerPos.GetComponent<Player>().currentPathNode != 0)
                 {
                     placement -= 1;
                     playerPos.GetComponent<Player>().placement += 1;
                 }
             }
             //opponent2
-            if (currentLap >= opponent2.GetComponent<AIEngine>().currentLap && currentPathNode > opponent2.GetComponent<AIEngine>().currentPathNode)
+            if ((currentLap > opponent2.GetComponent<AIEngine>().currentLap) || currentLap == opponent2.GetComponent<AIEngine>().currentLap && currentPathNode > opponent2.GetComponent<AIEngine>().currentPathNode)
             {
-                if (opponent2.GetComponent<AIEngine>().placement <= placement)
+                if (opponent2.GetComponent<AIEngine>().placement <= placement && opponent2.GetComponent<AIEngine>().currentPathNode != 0)
                 {
                     placement -= 1;
                     opponent2.GetComponent<AIEngine>().placement += 1;
                 }
             }
             //opponent3
-            if (currentLap >= opponent3.GetComponent<AIEngine>().currentLap && currentPathNode > opponent3.GetComponent<AIEngine>().currentPathNode)
+            if ((currentLap > opponent3.GetComponent<AIEngine>().currentLap) || currentLap == opponent3.GetComponent<AIEngine>().currentLap && currentPathNode > opponent3.GetComponent<AIEngine>().currentPathNode )
             {
-                if (opponent3.GetComponent<AIEngine>().placement <= placement)
+                if (opponent3.GetComponent<AIEngine>().placement <= placement && opponent3.GetComponent<AIEngine>().currentPathNode != 0)
                 {
                     placement -= 1;
                     opponent3.GetComponent<AIEngine>().placement += 1;
                 }
             }
             //opponent4
-            if (currentLap >= opponent4.GetComponent<AIEngine>().currentLap && currentPathNode > opponent4.GetComponent<AIEngine>().currentPathNode)
+            if ((currentLap > opponent4.GetComponent<AIEngine>().currentLap) || currentLap == opponent4.GetComponent<AIEngine>().currentLap && currentPathNode > opponent4.GetComponent<AIEngine>().currentPathNode)
             {
-                if (opponent4.GetComponent<AIEngine>().placement <= placement)
+                if (opponent4.GetComponent<AIEngine>().placement <= placement && opponent4.GetComponent<AIEngine>().currentPathNode != 0)
                 {
                     placement -= 1;
                     opponent4.GetComponent<AIEngine>().placement += 1;
@@ -416,7 +416,7 @@ public class AIEngine : MonoBehaviour
         {
             //kill the ai instantly
             deaths += 1;
-            ratings *= 0.5f;
+            ratings /= 2;
             currentHealth -= 1000;
             fallingDeath = true;
             boosting = false;
@@ -444,7 +444,7 @@ public class AIEngine : MonoBehaviour
                 //give opposing vehicle a quarter of their ratings and 1 kill
                 other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
                 other.gameObject.GetComponent<AIEngine>().kills += 1;
-                ratings *= 0.5f;
+                ratings /= 2;
             }
             //fodder enemy
             if (gameObject.tag == "Vehicle Fodder")
@@ -467,7 +467,7 @@ public class AIEngine : MonoBehaviour
                 //give opposing vehicle a quarter of their ratings
                 other.gameObject.GetComponent<Player>().ratings += ratings / 4;
                 other.gameObject.GetComponent<Player>().kills += 1;
-                ratings *= 0.5f;
+                ratings /= 2;
             }
             //fodder enemy
             if (gameObject.tag == "Vehicle Fodder") { other.gameObject.GetComponent<Player>().ratings += 75; }

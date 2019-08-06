@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,11 +18,16 @@ public class ResultHandler : MonoBehaviour
     //entry 1 = kills
     //entry 2 = deaths
     //entry 3 = total ratings
-    public float[] racerPlayerStats;
+    public int[] racerPlayerStats;
     public float[] racerAI1Stats;
     public float[] racerAI2Stats;
     public float[] racerAI3Stats;
     public float[] racerAI4Stats;
+    public double roundedPlayerScore;
+    public double roundedAI1Score;
+    public double roundedAI2Score;
+    public double roundedAI3Score;
+    public double roundedAI4Score;
     // Start is called before the first frame update
     void Awake()
     {
@@ -32,7 +38,7 @@ public class ResultHandler : MonoBehaviour
         //reset arrays when going back to any menu
         if (SceneManager.GetActiveScene().name != "Results")
         {
-            racerPlayerStats = new float[4];
+            racerPlayerStats = new int[4];
             racerAI1Stats = new float[4];
             racerAI2Stats = new float[4];
             racerAI3Stats = new float[4];
@@ -56,27 +62,28 @@ public class ResultHandler : MonoBehaviour
         //keep track of all racers laps, kills, death and total ratings
         if (SceneManager.GetActiveScene().name != "Results")
         {
-            racerPlayerStats[0] = racerPlayer.GetComponent<Player>().currentLap;
+            racerPlayerStats[0] = racerPlayer.GetComponent<Player>().placement;
             racerPlayerStats[1] = racerPlayer.GetComponent<Player>().kills;
             racerPlayerStats[2] = racerPlayer.GetComponent<Player>().deaths;
             racerPlayerStats[3] = racerPlayer.GetComponent<Player>().ratings;
 
-            racerAI1Stats[0] = racerAI1.GetComponent<AIEngine>().currentLap;
+            racerAI1Stats[0] = racerAI1.GetComponent<AIEngine>().placement;
             racerAI1Stats[1] = racerAI1.GetComponent<AIEngine>().kills;
             racerAI1Stats[2] = racerAI1.GetComponent<AIEngine>().deaths;
             racerAI1Stats[3] = racerAI1.GetComponent<AIEngine>().ratings;
 
-            racerAI2Stats[0] = racerAI2.GetComponent<AIEngine>().currentLap;
+
+            racerAI2Stats[0] = racerAI2.GetComponent<AIEngine>().placement;
             racerAI2Stats[1] = racerAI2.GetComponent<AIEngine>().kills;
             racerAI2Stats[2] = racerAI2.GetComponent<AIEngine>().deaths;
             racerAI2Stats[3] = racerAI2.GetComponent<AIEngine>().ratings;
 
-            racerAI3Stats[0] = racerAI3.GetComponent<AIEngine>().currentLap;
+            racerAI3Stats[0] = racerAI3.GetComponent<AIEngine>().placement;
             racerAI3Stats[1] = racerAI3.GetComponent<AIEngine>().kills;
             racerAI3Stats[2] = racerAI3.GetComponent<AIEngine>().deaths;
             racerAI3Stats[3] = racerAI3.GetComponent<AIEngine>().ratings;
 
-            racerAI4Stats[0] = racerAI4.GetComponent<AIEngine>().currentLap;
+            racerAI4Stats[0] = racerAI4.GetComponent<AIEngine>().placement;
             racerAI4Stats[1] = racerAI4.GetComponent<AIEngine>().kills;
             racerAI4Stats[2] = racerAI4.GetComponent<AIEngine>().deaths;
             racerAI4Stats[3] = racerAI4.GetComponent<AIEngine>().ratings;

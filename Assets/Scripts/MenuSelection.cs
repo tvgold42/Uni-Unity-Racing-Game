@@ -133,15 +133,12 @@ public class MenuSelection : MonoBehaviour
 
             if (SceneManager.GetActiveScene().name == "Results")
             {
-                if (activeButton == 1)
-                {
                     SceneManager.LoadScene("VehicleSelect");
-                }
             }
 
 
             //longer hold while levels load
-            if (timeToProceed >= 5f)
+            if (timeToProceed >= 8f)
             {
                 if (SceneManager.GetActiveScene().name == "TrackSelect")
                 {
