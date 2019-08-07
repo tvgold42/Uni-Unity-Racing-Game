@@ -277,7 +277,7 @@ public class Player : MonoBehaviour
                 CameraMovement.shake_intensity = 0f;
                 CameraMovement.originPosition = transform.position;
                 //cooldown so you cant spam boost activation
-                boostCooldown = 2;
+                boostCooldown = 0.2f;
 
             }
 
@@ -287,9 +287,8 @@ public class Player : MonoBehaviour
             }
             if (fuelBoosting == false) { accel = 330; boostCooldown -= Time.deltaTime; }
 
-            //regen boost when boost cooldown over
-            //no regen rn
-            //if(boostCooldown <= 0 && fuelLeft <= 5){fuelLeft += Time.deltaTime / 2;}
+            //boost regen
+            if(boostCooldown <= 0){fuelLeft += Time.deltaTime / 4;}
 
             //keep fuel at cap
             if(fuelLeft >= 10) { fuelLeft = 10; }
