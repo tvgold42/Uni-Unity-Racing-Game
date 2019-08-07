@@ -255,13 +255,15 @@ public class Player : MonoBehaviour
 
             //make this work with a controller too 
             //boosting
-            if ((Input.GetKey("space") || Input.GetButton("Fire1")) && fuelLeft > 0 && boostCooldown <= 0)
+            if ((Input.GetKey("space") || Input.GetButton("Fire1")) && fuelLeft > 1.5f && boostCooldown <= 0)
             {
                 if (fuelBoosting == false) { Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
                     //set base boosting velocity
                     playerRB.AddForce(transform.up * accel  * 30);
                     Instantiate(racehandler.GetComponent<RaceHandler>().whiteFlash, new Vector3(racehandler.transform.position.x, racehandler.transform.position.y + 1, racehandler.transform.position.z), Quaternion.Euler(90, 0, 0));
                     fuelBoosting = true;
+                    //take initial fuel cost
+                    fuelLeft -= 1.5f;
                     playerSound.PlayOneShot(engineBoost, 1f);
 
                 }
@@ -277,7 +279,7 @@ public class Player : MonoBehaviour
                 CameraMovement.shake_intensity = 0f;
                 CameraMovement.originPosition = transform.position;
                 //cooldown so you cant spam boost activation
-                boostCooldown = 0.2f;
+                boostCooldown = 0.8f;
 
             }
 
