@@ -58,10 +58,12 @@ public class CameraMovement : MonoBehaviour
             transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
         }
 
-        if (shake_intensity > 0 && target.GetComponent<Player>().fuelBoosting == false)
+        
+        if (shake_intensity > 0.5f && target.GetComponent<Player>().fuelBoosting == false)
         {
-            transform.position  += Random.insideUnitSphere * shake_intensity * 2;
-
+            
+            transform.position = originPosition;
+            transform.position += Random.insideUnitSphere * shake_intensity * 2;
             shake_intensity -= Time.deltaTime * 2f;
         }
 
