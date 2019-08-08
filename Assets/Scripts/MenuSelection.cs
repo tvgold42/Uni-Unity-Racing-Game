@@ -102,12 +102,9 @@ public class MenuSelection : MonoBehaviour
             {
                 //go to vehicle select
                 if (activeButton == 1)
-                { SceneManager.LoadScene("VehicleSelect"); }
-                //options
-                if (activeButton == 2)
-                { SceneManager.LoadScene("VehicleSelect"); }
+                { SceneManager.LoadScene("TrackSelect"); }
                 //quit
-                if (activeButton == 3)
+                if (activeButton == 2)
                 { Application.Quit(); }
             }
             if (SceneManager.GetActiveScene().name == "VehicleSelect")
@@ -128,12 +125,12 @@ public class MenuSelection : MonoBehaviour
             if (SceneManager.GetActiveScene().name == "TrackSelect")
             {
                 if (activeButton == 3)
-                { SceneManager.LoadScene("VehicleSelect"); }
+                { SceneManager.LoadScene("MainMenu"); }
             }
 
-            if (SceneManager.GetActiveScene().name == "Results")
+            if (SceneManager.GetActiveScene().name == "Results" || SceneManager.GetActiveScene().name == "GameOver")
             {
-                    SceneManager.LoadScene("VehicleSelect");
+                    SceneManager.LoadScene("TrackSelect");
             }
 
 

@@ -26,5 +26,10 @@ public class RaceHudTime : MonoBehaviour
         if (gameObject.name == "HudTime") { hudText.text = privateTime.ToString(); }
         if (gameObject.name == "HudLap" && RaceHandler.raceStarted == true) { hudText.text = playerObject.GetComponent<Player>().currentLap.ToString(); }
         if (gameObject.name == "HudPlacement" && RaceHandler.raceStarted == true) { hudText.text = playerObject.GetComponent<Player>().placement.ToString(); }
+
+        if (raceHandler.GetComponent<RaceHandler>().raceFinished == true)
+        {
+            hudText.text = "";
+        }
     }
 }

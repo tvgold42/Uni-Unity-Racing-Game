@@ -209,7 +209,7 @@ public class Player : MonoBehaviour
         }
 
         //disable controls if race hasnt started
-        if (RaceHandler.raceStarted == true && death == false)
+        if (RaceHandler.raceStarted == true && death == false && racehandler.GetComponent<RaceHandler>().raceFinished == false)
         {
             if (!Input.GetKey("left") && !Input.GetKey("right"))
             {
