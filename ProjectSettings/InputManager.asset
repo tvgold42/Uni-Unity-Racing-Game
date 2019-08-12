@@ -44,7 +44,7 @@ InputManager:
     negativeButton: 
     positiveButton: left ctrl
     altNegativeButton: 
-    altPositiveButton: mouse 0
+    altPositiveButton: 
     gravity: 1000
     dead: 0.001
     sensitivity: 1000
@@ -180,7 +180,7 @@ InputManager:
     invert: 1
     type: 2
     axis: 1
-    joyNum: 16
+    joyNum: 1
   - serializedVersion: 3
     m_Name: Fire1
     descriptiveName: 

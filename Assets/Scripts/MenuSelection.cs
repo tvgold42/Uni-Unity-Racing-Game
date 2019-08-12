@@ -85,9 +85,17 @@ public class MenuSelection : MonoBehaviour
             else
             Instantiate(fadeOut, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), transform.rotation);
         }
+        //press b on controller to go back
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetButton("Fire2")) && selected == false && SceneManager.GetActiveScene().name != "Title")
+        {
+            selected = true;
+            buttonAudio.PlayOneShot(buttonSelect, 1f);
+            activeButton = maxButton;
+            Instantiate(fadeOut, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), transform.rotation);
+        }
 
-        //proceeding to relavent scene
-        if (timeToProceed >= 1.5f)
+            //proceeding to relavent scene
+            if (timeToProceed >= 1.5f)
         {
             //get scene and then the selection made
             //title
@@ -104,8 +112,10 @@ public class MenuSelection : MonoBehaviour
                 if (activeButton == 1)
                 { SceneManager.LoadScene("TrackSelect"); }
                 //quit
-                if (activeButton == 2)
-                { Application.Quit(); }
+                if (activeButton >= 2)
+                { Application.Quit();
+                    Debug.Log("Game Quit");
+                }
             }
             if (SceneManager.GetActiveScene().name == "VehicleSelect")
             {

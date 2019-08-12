@@ -48,5 +48,15 @@ public class AITrail : MonoBehaviour
             boostTrail.emitting = false;
             playerTrail.emitting = true;
         }
+        //stop emitting if dead
+        if (vehicle.GetComponent<AIEngine>().currentHealth <= 0)
+        {
+            playerTrail.emitting = false;
+        }
+        //stop emitting if dead
+        if (vehicle.GetComponent<AIEngine>().currentHealth > 0)
+        {
+            playerTrail.emitting = true;
+        }
     }
 }

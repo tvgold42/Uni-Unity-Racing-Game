@@ -305,6 +305,8 @@ public class Player : MonoBehaviour
             //stop moving, go invisible, spawn explosion prefab
             death = true;
             engineActive = false;
+            fuelBoosting = false;
+            fuelLeft = 0;
             respawnTimer = 3;
             playerRB.velocity = Vector3.zero;
             CameraMovement.originPosition = transform.position;
@@ -428,9 +430,11 @@ public class Player : MonoBehaviour
             }
         }
         //end race once player reaches lap 4
-        if (currentLap == 4 && racehandler.GetComponent<RaceHandler>().timeLeft > 0)
+        if (currentLap == 4)
         {
-            racehandler.GetComponent<RaceHandler>().timeLeft = 0;
+            if (racehandler.GetComponent<RaceHandler>().timeLeft > 0)
+            { racehandler.GetComponent<RaceHandler>().timeLeft = 0; }
+            angle += Time.deltaTime * 60;
         }
     }
 
@@ -514,49 +518,54 @@ public class Player : MonoBehaviour
             CameraMovement.shake_decay = 0.005f;
         }
 
-        //colliding with other vehicle
-        if ((other.gameObject.tag == "Vehicle") && collideBoostTimer <= 0)
+        if (currentLap != 4)
         {
-            other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f,1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
-            //poomf effect
-            Debug.Log("Collision with vehicle " + other.gameObject.name);
-
-            CameraMovement.originPosition = transform.position;
-            CameraMovement.shake_intensity += 0.3f;
-            CameraMovement.shake_decay = 0.005f;
-            fuelLeft += 1;
-
-            //take damage if not boosting
-            if(fuelBoosting == false)
+            //colliding with other vehicle
+            if ((other.gameObject.tag == "Vehicle") && collideBoostTimer <= 0)
             {
-                //neative collision
-                Instantiate(hurtEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
-                //only lose health if not just respawned
-                if (respawnInvuln <= 0)
-                { currentHealth -= 4.5f;
-                  /*healthCooldown = 2;*/ }
-                playerSound.PlayOneShot(tussleSoundBad, 1f);
-                if (currentHealth <= 0)
+                other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
+                //poomf effect
+                Debug.Log("Collision with vehicle " + other.gameObject.name);
+
+                CameraMovement.originPosition = transform.position;
+                CameraMovement.shake_intensity += 0.3f;
+                CameraMovement.shake_decay = 0.005f;
+                fuelLeft += 1;
+
+                //take damage if not boosting
+                if (fuelBoosting == false)
                 {
-                    if (other.gameObject.tag == "Vehicle")
+                    //neative collision
+                    Instantiate(hurtEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                    //only lose health if not just respawned
+                    if (respawnInvuln <= 0)
                     {
-                        //give opposing vehicle a quarter of their ratings and 1 kill
-                        other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
-                        other.gameObject.GetComponent<AIEngine>().kills += 1;
-                        deaths += 1;
-
+                        currentHealth -= 4.5f;
+                        /*healthCooldown = 2;*/
                     }
-                    ratings /= 2;
+                    playerSound.PlayOneShot(tussleSoundBad, 1f);
+                    if (currentHealth <= 0)
+                    {
+                        if (other.gameObject.tag == "Vehicle")
+                        {
+                            //give opposing vehicle a quarter of their ratings and 1 kill
+                            other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
+                            other.gameObject.GetComponent<AIEngine>().kills += 1;
+                            deaths += 1;
+
+                        }
+                        ratings /= 2;
+                    }
                 }
+                if (fuelBoosting == true)
+                {
+                    //positive collision
+                    Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                    // playerSound.volume = 0.2f;
+                    playerSound.PlayOneShot(tussleSoundGood, 1f);
+                }
+                collideBoostTimer = 0.3f;
             }
-            if (fuelBoosting == true)
-            {
-                //positive collision
-                Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
-               // playerSound.volume = 0.2f;
-                playerSound.PlayOneShot(tussleSoundGood, 1f);
-            }
-            collideBoostTimer = 0.3f;
         }
     }
 }

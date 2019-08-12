@@ -48,5 +48,15 @@ public class VehicleTrail : MonoBehaviour
             playerBoostTrail.emitting = false;
             playerTrail.emitting = true;
         }
+        //stop emitting if dead
+        if (vehicle.GetComponent<Player>().currentHealth <= 0)
+        {
+            playerTrail.emitting = false;
+        }
+        //stop emitting if dead
+        if (vehicle.GetComponent<Player>().currentHealth > 0)
+        {
+            playerTrail.emitting = true;
+        }
     }
 }

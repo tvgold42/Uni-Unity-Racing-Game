@@ -62,7 +62,7 @@ public class RaceHandler : MonoBehaviour
             }
         }
         if (timeLeft <= -1 && resultTransition == true && playerObject.GetComponent<Player>().placement == 1) { SceneManager.LoadScene("Results"); }
-        if (timeLeft <= -1 && resultTransition == true && playerObject.GetComponent<Player>().placement != 1) { SceneManager.LoadScene("GameOver"); }
+        if (timeLeft <= -1 && resultTransition == true && playerObject.GetComponent<Player>().placement != 1) { SceneManager.LoadScene("Results"); }
         if (raceFinished == true && resultTransition == false) { timeLeft += Time.deltaTime; }
         //race timer
         if (raceStarted == true && raceFinished == false)
@@ -86,7 +86,7 @@ public class RaceHandler : MonoBehaviour
             Instantiate(whiteFlash, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Quaternion.Euler(90, 0, 0));
         }
         //skipping track preview
-        if ((Input.GetKey(KeyCode.Return) || Input.GetButton("Submit")) && racePreview == true)
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit")) && racePreview == true)
         {
             if (raceFinished == true)
             {

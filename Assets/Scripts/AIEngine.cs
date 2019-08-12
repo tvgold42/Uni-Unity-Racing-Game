@@ -364,17 +364,17 @@ public class AIEngine : MonoBehaviour
     //turning towards checkpoints
     private void Steering()
     {
-        //find distance from ai to next node
-        Vector3 relativeAngle = transform.InverseTransformPoint(pathNodes[currentPathNode].position);
-        //convert relative distance to be a range of -1 to 1
-       // relativeAngle /= relativeAngle.magnitude;
+            //find distance from ai to next node
+            Vector3 relativeAngle = transform.InverseTransformPoint(pathNodes[currentPathNode].position);
+            //convert relative distance to be a range of -1 to 1
 
-        newSteerAngle = (relativeAngle.x / relativeAngle.magnitude) * maxSteerAngle;
-        transform.eulerAngles = new Vector3(90, transform.rotation.y, angle);
-        AIWheel.steerAngle = newSteerAngle;
-        AIWheel2.steerAngle = newSteerAngle;
-        angle -= newSteerAngle;
-      //  Debug.Log(relativeAngle);
+            newSteerAngle = (relativeAngle.x / relativeAngle.magnitude) * maxSteerAngle;
+            transform.eulerAngles = new Vector3(90, transform.rotation.y, angle);
+            AIWheel.steerAngle = newSteerAngle;
+            AIWheel2.steerAngle = newSteerAngle;
+            angle -= newSteerAngle;
+         
+     
     }
 
 
@@ -430,48 +430,51 @@ public class AIEngine : MonoBehaviour
     {
 
         //colliding with other vehicle
-        if ((other.gameObject.tag == "Vehicle" || other.gameObject.tag == "Vehicle Fodder" )&& collideBoostTimer <= 0)
+        if (currentLap != 4)
         {
-            other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
-            collideBoostTimer = 0.7f;
-            Debug.Log("Collision with vehicle " + other.gameObject.name);
-            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
-            //lose health
-            if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 4f; }
-            //if death, give attacking vehicle points
-            if (other.gameObject.tag == "Vehicle" && gameObject.tag == "Vehicle" && currentHealth <= 0)
+            if ((other.gameObject.tag == "Vehicle" || other.gameObject.tag == "Vehicle Fodder") && collideBoostTimer <= 0)
             {
-                //give opposing vehicle a quarter of their ratings and 1 kill
-                other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
-                other.gameObject.GetComponent<AIEngine>().kills += 1;
-                ratings /= 2;
-            }
-            //fodder enemy
-            if (gameObject.tag == "Vehicle Fodder")
-            {
-                other.gameObject.GetComponent<AIEngine>().ratings += 75;
-                other.gameObject.GetComponent<AIEngine>().kills += 1;
-            }
+                other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
+                collideBoostTimer = 0.7f;
+                Debug.Log("Collision with vehicle " + other.gameObject.name);
+                Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                //lose health
+                if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 4f; }
+                //if death, give attacking vehicle points
+                if (other.gameObject.tag == "Vehicle" && gameObject.tag == "Vehicle" && currentHealth <= 0)
+                {
+                    //give opposing vehicle a quarter of their ratings and 1 kill
+                    other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
+                    other.gameObject.GetComponent<AIEngine>().kills += 1;
+                    ratings /= 2;
+                }
+                //fodder enemy
+                if (gameObject.tag == "Vehicle Fodder")
+                {
+                    other.gameObject.GetComponent<AIEngine>().ratings += 75;
+                    other.gameObject.GetComponent<AIEngine>().kills += 1;
+                }
 
-        }
-        if (other.gameObject.tag == "Player" && collideBoostTimer <= 0)
-        {
-            other.gameObject.GetComponent<Player>().playerRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
-            collideBoostTimer = 0.7f;
-            Debug.Log("Collision with player");
-            Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
-            if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 5f; }
-            //if death, give attacking vehicle points
-            if (currentHealth <= 0)
-            {
-                //give opposing vehicle a quarter of their ratings
-                other.gameObject.GetComponent<Player>().ratings += ratings / 4;
-                other.gameObject.GetComponent<Player>().kills += 1;
-                ratings /= 2;
             }
-            //fodder enemy
-            if (gameObject.tag == "Vehicle Fodder") { other.gameObject.GetComponent<Player>().ratings += 75; }
+            if (other.gameObject.tag == "Player" && collideBoostTimer <= 0)
+            {
+                other.gameObject.GetComponent<Player>().playerRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
+                collideBoostTimer = 0.7f;
+                Debug.Log("Collision with player");
+                Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+                if (boosting == false && respawnInvuln <= 0 && RaceHandler.raceStarted == true) { currentHealth -= 5f; }
+                //if death, give attacking vehicle points
+                if (currentHealth <= 0)
+                {
+                    //give opposing vehicle a quarter of their ratings
+                    other.gameObject.GetComponent<Player>().ratings += ratings / 4;
+                    other.gameObject.GetComponent<Player>().kills += 1;
+                    ratings /= 2;
+                }
+                //fodder enemy
+                if (gameObject.tag == "Vehicle Fodder") { other.gameObject.GetComponent<Player>().ratings += 75; }
 
+            }
         }
     }
 }
