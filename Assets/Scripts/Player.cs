@@ -435,6 +435,8 @@ public class Player : MonoBehaviour
             if (racehandler.GetComponent<RaceHandler>().timeLeft > 0)
             { racehandler.GetComponent<RaceHandler>().timeLeft = 0; }
             angle += Time.deltaTime * 60;
+            fuelBoosting = false;
+            fuelLeft = 0;
         }
     }
 
