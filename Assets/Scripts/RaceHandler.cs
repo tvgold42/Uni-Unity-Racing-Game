@@ -9,6 +9,7 @@ public class RaceHandler : MonoBehaviour
     public static bool raceStarted = false;
     public static bool racePreview = true;
     public static float raceTime;
+    public float playerTime;
     public AudioSource raceHandlerAudio;
     public AudioClip countdownAudio;
     public AudioClip trackIntroAudio;
@@ -32,6 +33,7 @@ public class RaceHandler : MonoBehaviour
         raceHandlerAudio.Play();
         resultTransition = false;
         countDown = 4;
+        playerTime = 0;
 
 
 }
@@ -63,11 +65,14 @@ public class RaceHandler : MonoBehaviour
         if (timeLeft <= -1 && resultTransition == true && playerObject.GetComponent<Player>().placement != 1) { SceneManager.LoadScene("GameOver"); }
         if (raceFinished == true && resultTransition == false) { timeLeft += Time.deltaTime; }
         //race timer
-        if (raceStarted == true)
+        if (raceStarted == true && raceFinished == false)
         {
             raceTime += Time.deltaTime;
             timeLeft -= Time.deltaTime;
+            playerTime += Time.deltaTime;
         }
+        if (raceFinished == true) { timeLeft -= Time.deltaTime; }
+
         if (countDown > 0 && racePreview == false)
         {
             countDown -= Time.deltaTime;

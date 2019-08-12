@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     public float topSpeed;
     public float accelerate;
     public float brake;
+    public Vector3 targetRotation;
+    public Vector3 newDir;
     private float collideBoostTimer;
     private static float playerX;
     private static float playerZ;
@@ -318,6 +320,16 @@ public class Player : MonoBehaviour
             respawnTimer -= Time.deltaTime;
             playerRB.velocity = Vector3.zero;
             playerCol.enabled = false;
+
+            //rotate to face correct way, uses a modified version of the AI's steering function
+           // angle = 0;
+            Vector3 relativeAngle = transform.InverseTransformPoint(pathNodes[currentPathNode].position);
+            float newSteerAngle;
+            float maxSteerAngle = 40f;
+            newSteerAngle = (relativeAngle.x / relativeAngle.magnitude) * maxSteerAngle;
+            transform.eulerAngles = new Vector3(90, transform.rotation.y, angle);
+            angle -= newSteerAngle;
+
         }
         if (death == true && respawnTimer <= 0)
         {
@@ -328,7 +340,7 @@ public class Player : MonoBehaviour
                 if (currentPathNode > 0)
                 { transform.position = pathNodes[currentPathNode - 1].position; }
                 if (currentPathNode == 0)
-                { transform.position = pathNodes[currentPathNode].position; }
+                { transform.position = pathNodes[currentPathNode].position; }                
             }
             Debug.Log("Respawned Player");
             death = false;
@@ -366,8 +378,11 @@ public class Player : MonoBehaviour
             playerRB.velocity = new Vector3(playerRB.velocity.x, playerRB.velocity.y, -topSpeed + Time.deltaTime);
         }
 
-
-        transform.eulerAngles = new Vector3(90, transform.rotation.y, angle);
+        //only use angle variable as rotation if alive
+        if (currentHealth > 0)
+        {
+            transform.eulerAngles = new Vector3(90, transform.rotation.y, angle);
+        }
 
 
         //placement tracking

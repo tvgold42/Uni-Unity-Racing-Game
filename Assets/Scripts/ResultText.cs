@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,7 @@ public class ResultText : MonoBehaviour
 {
     public Text myText;
     public GameObject resultHandler;
+    private double privateTime;
 
 
     // Start is called before the first frame update
@@ -14,6 +16,13 @@ public class ResultText : MonoBehaviour
     {
         myText = GetComponent<Text>();
         resultHandler = GameObject.Find("ResultHandler");
+        privateTime = resultHandler.GetComponent<ResultHandler>().playerTime;
+        privateTime = Math.Round(privateTime, 2);
+
+        if (gameObject.name == "Time")
+        {
+            myText.text = "Your time: " + privateTime.ToString();
+        }
 
         if (gameObject.name == "PlayerStats")
         {

@@ -19,8 +19,8 @@ public class RaceHudTime : MonoBehaviour
     void Update()
     {
         //round time to 2 decimal places, so we only see whole number
-        privateTime = raceHandler.GetComponent<RaceHandler>().timeLeft;
-        privateTime = Math.Round(privateTime, 1);
+        privateTime = raceHandler.GetComponent<RaceHandler>().playerTime;
+        privateTime = Math.Round(privateTime, 2);
 
         //timer
         if (gameObject.name == "HudTime") { hudText.text = privateTime.ToString(); }

@@ -12,6 +12,7 @@ public class ResultHandler : MonoBehaviour
     public GameObject racerAI2;
     public GameObject racerAI3;
     public GameObject racerAI4;
+    public GameObject raceHandler;
 
     //each racers stats will be saved in an array
     //entry 0 = laps completed
@@ -23,6 +24,7 @@ public class ResultHandler : MonoBehaviour
     public float[] racerAI2Stats;
     public float[] racerAI3Stats;
     public float[] racerAI4Stats;
+    public float playerTime;
     public double roundedPlayerScore;
     public double roundedAI1Score;
     public double roundedAI2Score;
@@ -43,6 +45,7 @@ public class ResultHandler : MonoBehaviour
             racerAI2Stats = new float[4];
             racerAI3Stats = new float[4];
             racerAI4Stats = new float[4];
+            playerTime = 0;
         }
     }
 
@@ -62,6 +65,8 @@ public class ResultHandler : MonoBehaviour
         //keep track of all racers laps, kills, death and total ratings
         if (SceneManager.GetActiveScene().name != "Results")
         {
+            playerTime = raceHandler.GetComponent<RaceHandler>().playerTime;
+
             racerPlayerStats[0] = racerPlayer.GetComponent<Player>().placement;
             racerPlayerStats[1] = racerPlayer.GetComponent<Player>().kills;
             racerPlayerStats[2] = racerPlayer.GetComponent<Player>().deaths;
