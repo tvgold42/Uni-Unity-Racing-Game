@@ -403,11 +403,6 @@ public class AIEngine : MonoBehaviour
         {
             if (other.GetComponent<Pickup>().pickupAble == true)
             {
-                if (boosting == true)
-                {
-                    //as ai's dont have fuel, just increase the length of their boost
-                    boostCoolDown += 3;
-                }
                 other.GetComponent<Pickup>().respawnTimer = 4;
             }
         }

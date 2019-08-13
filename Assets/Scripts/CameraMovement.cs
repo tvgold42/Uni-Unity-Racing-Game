@@ -59,7 +59,7 @@ public class CameraMovement : MonoBehaviour
         }
 
         
-        if (shake_intensity > 0.5f && target.GetComponent<Player>().fuelBoosting == false)
+        if (shake_intensity > 0.5f && target.GetComponent<Player>().fuelBoosting == false && raceHandler.GetComponent<RaceHandler>().paused == false)
         {
             
             transform.position = originPosition;
@@ -67,7 +67,7 @@ public class CameraMovement : MonoBehaviour
             shake_intensity -= Time.deltaTime * 2f;
         }
 
-        if (target.GetComponent<Player>().fuelBoosting == true)
+        if (target.GetComponent<Player>().fuelBoosting == true && raceHandler.GetComponent<RaceHandler>().paused == false)
         {
             transform.position += Random.insideUnitSphere * shake_intensity * 2;
 
