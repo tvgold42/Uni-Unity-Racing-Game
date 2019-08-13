@@ -8,6 +8,7 @@ public class RaceHandler : MonoBehaviour
     public float countDown = 4;
     public static bool raceStarted = false;
     public static bool racePreview = true;
+    public bool paused = false;
     public static float raceTime;
     public float playerTime;
     public AudioSource raceHandlerAudio;
@@ -86,7 +87,7 @@ public class RaceHandler : MonoBehaviour
             Instantiate(whiteFlash, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Quaternion.Euler(90, 0, 0));
         }
         //skipping track preview
-        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit")) && racePreview == true)
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetButtonDown("Submit") || Input.GetButtonDown("Fire1")) && racePreview == true)
         {
             if (raceFinished == true)
             {
@@ -106,5 +107,18 @@ public class RaceHandler : MonoBehaviour
             }
    
         }
+        
+        //pausing the game
+        if ((Input.GetButtonDown("Submit") || Input.GetKeyDown(KeyCode.P)) && raceStarted == true)
+        {
+            //toggles pause
+            paused = !paused;
+        }
+
+        if (paused == true)
+        { Time.timeScale = 0;}
+        if (paused == false)
+        { Time.timeScale = 1; }
+        
     }
 }
