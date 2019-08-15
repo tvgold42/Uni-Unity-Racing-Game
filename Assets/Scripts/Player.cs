@@ -7,7 +7,6 @@ public class Player : MonoBehaviour
     private Transform playerPos;
     public Rigidbody playerRB;
     private BoxCollider playerCol;
-    private SpriteRenderer playerRender;
     public AudioSource playerSound;
     public AudioClip boostSound;
     public AudioClip tussleSoundGood;
@@ -40,7 +39,7 @@ public class Player : MonoBehaviour
 
     public float maxHealth;
     public float currentHealth;
-  //  private float healthCooldown;
+
     public int ratings = 0;
 
     private bool death = false;
@@ -69,8 +68,6 @@ public class Player : MonoBehaviour
     public GameObject opponent3;
     public GameObject opponent4;
 
-    //selected vehicle
-    public static int selectedVehicle = 1;
     public Sprite vehicle1;
     public Sprite vehicle2;
 
@@ -87,7 +84,6 @@ public class Player : MonoBehaviour
         playerPos = GetComponent<Transform>();
         playerRB = GetComponent<Rigidbody>();
         playerCol = GetComponent<BoxCollider>();
-        playerRender = GetComponent<SpriteRenderer>();
         playerSound = GetComponent<AudioSource>();
         initialSize = transform.localScale.x;
         fuelLeft = 10;
@@ -108,14 +104,6 @@ public class Player : MonoBehaviour
                 pathNodes.Add(pathLine[i]);
             }
         }
-
-        //use selected vehicle
-        if (selectedVehicle == 2)
-        {
-            playerRender.sprite = vehicle2;
-        }
-
-
     }
 
 
@@ -159,14 +147,6 @@ public class Player : MonoBehaviour
         //always round ratings to the nearest whole number
         Mathf.Round(ratings);
 
-        //health regen cooldown, currently disabled
-        /*
-        healthCooldown -= Time.deltaTime;
-        if (healthCooldown <= 0 && currentHealth <= maxHealth && death == false)
-        {
-            currentHealth += Time.deltaTime / 3;
-        }
-        */
         if (currentHealth <= 0) { currentHealth = 0; }
 
         if (transform.position.y >= yPositionCap)
@@ -255,7 +235,6 @@ public class Player : MonoBehaviour
                 }
             }
 
-            //make this work with a controller too 
             //boosting
             if ((Input.GetKey("space") || Input.GetButton("Fire1")) && fuelLeft > 1.5f && boostCooldown <= 0)
             {
@@ -314,8 +293,6 @@ public class Player : MonoBehaviour
             CameraMovement.shake_decay = 0.005f;
             Instantiate(explosionEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Quaternion.Euler(90,0,0));
             playerSound.PlayOneShot(explosion, 1f);
-            //replace sprite renderer with mesh renderer in future
-            playerRender.enabled = false;
         }
         if (death == true && respawnTimer >= 0)
         {
@@ -347,7 +324,6 @@ public class Player : MonoBehaviour
             Debug.Log("Respawned Player");
             death = false;
             playerCol.enabled = true;
-            playerRender.enabled = true;
             respawnInvuln = 3;
             currentHealth = maxHealth;         
         }
@@ -355,11 +331,6 @@ public class Player : MonoBehaviour
         if (respawnInvuln >= 0)
         {
             respawnInvuln -= Time.deltaTime;
-            //flash for invuln
-            if (respawnInvuln >= 1.5 && respawnInvuln <= 2.5) {playerRender.enabled = false;}
-            if (respawnInvuln <= 1.5 && respawnInvuln >= 1) { playerRender.enabled = true; }
-            if (respawnInvuln <= 1 && respawnInvuln >= 0.1) { playerRender.enabled = false; }
-            if (respawnInvuln <= 0.1) { playerRender.enabled = true; }
         }
 
 
@@ -451,8 +422,6 @@ public class Player : MonoBehaviour
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 1f;
             CameraMovement.shake_decay = 0.005f;
-            //change volume accordingly
-          //  playerSound.volume = 0.2f;
             playerSound.PlayOneShot(boostSound, 1f);
             collideBoostTimer = 0.7f;
         }
@@ -511,10 +480,6 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.tag == "Ground" && playerRB.velocity.y != 0)
         {
-            //poomf effect
-            Debug.Log("poomf");
-          //  Instantiate(landEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
-
             CameraMovement.originPosition = transform.position;
             CameraMovement.shake_intensity = 0.3f;
             CameraMovement.shake_decay = 0.005f;
@@ -526,7 +491,6 @@ public class Player : MonoBehaviour
             if ((other.gameObject.tag == "Vehicle") && collideBoostTimer <= 0)
             {
                 other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
-                //poomf effect
                 Debug.Log("Collision with vehicle " + other.gameObject.name);
 
                 CameraMovement.originPosition = transform.position;
@@ -537,13 +501,12 @@ public class Player : MonoBehaviour
                 //take damage if not boosting
                 if (fuelBoosting == false)
                 {
-                    //neative collision
+                    //negative collision
                     Instantiate(hurtEffect, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
                     //only lose health if not just respawned
                     if (respawnInvuln <= 0)
                     {
                         currentHealth -= 4.5f;
-                        /*healthCooldown = 2;*/
                     }
                     playerSound.PlayOneShot(tussleSoundBad, 1f);
                     if (currentHealth <= 0)

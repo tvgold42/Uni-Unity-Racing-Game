@@ -11,7 +11,6 @@ public class ResultText : MonoBehaviour
     private double privateTime;
 
 
-    // Start is called before the first frame update
     void Start()
     {
         myText = GetComponent<Text>();
@@ -62,9 +61,4 @@ public class ResultText : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

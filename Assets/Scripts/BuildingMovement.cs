@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class BuildingMovement : MonoBehaviour
 {
+    //this script is for the environment buildings floating up and down
     public bool movingUpwards = false;
     public float baseHeight;
     public float maxHeight;
     public float minHeight;
     public float heightModifier;
-    // Start is called before the first frame update
+
     void Start()
     {
         baseHeight = transform.position.y;
@@ -18,7 +19,7 @@ public class BuildingMovement : MonoBehaviour
         heightModifier = Random.Range(-0.002f, -0.008f);
     }
 
-    // Update is called once per frame
+
     void Update()
     {
             transform.position = new Vector3(transform.position.x, transform.position.y + heightModifier, transform.position.z);

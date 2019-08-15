@@ -15,8 +15,6 @@ public class AIPreview : MonoBehaviour
     public float accel;
     public float newSteerAngle;
     public float angle;
-    public float initialSize;
-    public float collideBoostTimer;
     public float xVelocity;
     public float zVelocity;
 
@@ -31,7 +29,6 @@ public class AIPreview : MonoBehaviour
     {
         AIPos = GetComponent<Transform>();
         AIRB = GetComponent<Rigidbody>();
-        initialSize = transform.localScale.x;
 
         Transform[] pathLine = AIPath.GetComponentsInChildren<Transform>();
         pathNodes = new List<Transform>();
@@ -61,18 +58,6 @@ public class AIPreview : MonoBehaviour
         if (RaceHandler.racePreview == false)
         {
             Destroy(gameObject);
-        }
-
-        //make it so the vehicle cant spam boost collide with other
-        if (collideBoostTimer > 0)
-        {
-            collideBoostTimer -= Time.deltaTime;
-        }
-
-        //limit max scale
-        if (AIPos.localScale.x >= 5)
-        {
-            AIPos.localScale = new Vector3(5, 5, initialSize);
         }
 
     }
@@ -106,28 +91,13 @@ public class AIPreview : MonoBehaviour
     {
         //find distance from ai to next node
         Vector3 relativeAngle = transform.InverseTransformPoint(pathNodes[currentPathNode].position);
-        //convert relative distance to be a range of -1 to 1
-        // relativeAngle /= relativeAngle.magnitude;
 
         newSteerAngle = (relativeAngle.x / relativeAngle.magnitude) * maxSteerAngle;
         transform.eulerAngles = new Vector3(90, transform.rotation.y, angle);
         AIWheel.steerAngle = newSteerAngle;
         AIWheel2.steerAngle = newSteerAngle;
         angle -= newSteerAngle;
-        //  Debug.Log(relativeAngle);
     }
 
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "BoostPad")
-        {
-            Debug.Log("BoostPad");
-            AIRB.AddForce(transform.up * 500 * 20f);
-
-        }
-
-
-    }
 
 }

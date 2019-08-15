@@ -9,14 +9,14 @@ public class VehicleTrail : MonoBehaviour
     public TrailRenderer playerBoostTrail;
     public float speedX;
     public float speedZ;
-    // Start is called before the first frame update
+
     void Start()
     {
         playerTrail = GetComponent<TrailRenderer>();
         playerTrail.emitting = false;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         speedX = vehicle.GetComponent<Player>().playerRB.velocity.x;

@@ -13,14 +13,14 @@ public class RaceHud : MonoBehaviour
     public float barSize;
     public float CooldownBarSize;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         baseBarSize = transform.localScale.x;
         baseCooldownSize = transform.localScale.y;
     }
 
-    // Update is called once per frame
+
     void FixedUpdate()
     {
         //disable hud if race hasnt started

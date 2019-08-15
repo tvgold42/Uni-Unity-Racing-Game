@@ -30,7 +30,7 @@ public class ResultHandler : MonoBehaviour
     public double roundedAI2Score;
     public double roundedAI3Score;
     public double roundedAI4Score;
-    // Start is called before the first frame update
+
     void Awake()
     {
         if (SceneManager.GetActiveScene().name != "Results")
@@ -50,7 +50,6 @@ public class ResultHandler : MonoBehaviour
     }
 
 
-    // Update is called once per frame
     void Update()
     {
         if (racerPlayer == null)

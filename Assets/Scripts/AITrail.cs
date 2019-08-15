@@ -9,14 +9,14 @@ public class AITrail : MonoBehaviour
     public GameObject vehicle;
     public float speedX;
     public float speedZ;
-    // Start is called before the first frame update
+
     void Start()
     {
         playerTrail = GetComponent<TrailRenderer>();
         playerTrail.emitting = false;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         speedX = vehicle.GetComponent<AIEngine>().AIRB.velocity.x;

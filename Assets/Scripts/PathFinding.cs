@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PathFinding : MonoBehaviour
 {
+    //script for creating the path for the ai
 
     public Color lineColor;
     private List<Transform> pathNodes = new List<Transform>();
@@ -39,15 +40,4 @@ public class PathFinding : MonoBehaviour
         }
     }
 
-        // Start is called before the first frame update
-        void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

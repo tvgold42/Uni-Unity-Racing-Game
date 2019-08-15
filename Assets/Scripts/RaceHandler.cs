@@ -24,7 +24,7 @@ public class RaceHandler : MonoBehaviour
     public GameObject whiteFade;
     public GameObject playerObject;
     public GameObject trophyObject;
-    // Start is called before the first frame update
+
     void Start()
     {
         raceHandlerAudio = GetComponent<AudioSource>();
@@ -39,7 +39,7 @@ public class RaceHandler : MonoBehaviour
 
 }
 
-    // Update is called once per frame
+
     void Update()
     {
         if(timeLeft <= 0 && raceFinished == false)
@@ -55,9 +55,10 @@ public class RaceHandler : MonoBehaviour
                 raceHandlerAudio.clip = victoryAudio;
                 raceHandlerAudio.Play();
             }
-            //have some text pop up and then fade out
+
             else if (playerObject.GetComponent<Player>().placement != 1)
             {
+                //fade out
                 Instantiate(whiteFade, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Quaternion.Euler(90, 0, 0));
                 resultTransition = true;
             }

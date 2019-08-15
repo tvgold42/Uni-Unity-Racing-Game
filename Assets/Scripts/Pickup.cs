@@ -12,7 +12,7 @@ public class Pickup : MonoBehaviour
     public AudioSource pickupAudio;
     public SpriteRenderer pickupRender;
     public GameObject pickupVisual;
-    // Start is called before the first frame update
+
     void Start()
     {
         baseScale = transform.localScale.x;
@@ -21,7 +21,7 @@ public class Pickup : MonoBehaviour
         pickupAudio = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
 

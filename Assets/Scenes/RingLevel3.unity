@@ -18110,7 +18110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dampTime: 0.03
-  target: {fileID: 1180464933}
+  targetPlayer: {fileID: 1180464933}
   previewAI: {fileID: 7164313585008975800}
   gameCamera: {fileID: 0}
   raceHandler: {fileID: 1271019396}
@@ -22395,8 +22395,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1257638844}
   m_LocalRotation: {x: -0, y: 0.4422537, z: -0, w: 0.89689}
-  m_LocalPosition: {x: -9.5, y: -7.3, z: -188.5}
-  m_LocalScale: {x: 102.54, y: 0.30616644, z: 24.738487}
+  m_LocalPosition: {x: -8.7, y: -7.3, z: -187.9}
+  m_LocalScale: {x: 102.54, y: 0.30616644, z: 26.294537}
   m_Children: []
   m_Father: {fileID: 634948173}
   m_RootOrder: 5

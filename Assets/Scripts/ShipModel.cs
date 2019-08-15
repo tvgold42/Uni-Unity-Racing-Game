@@ -7,13 +7,11 @@ public class ShipModel : MonoBehaviour
     public GameObject parentVehicle;
     public float baseScale;
 
-    // Start is called before the first frame update
     void Start()
     {
         baseScale = transform.localScale.x;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (parentVehicle.tag == "Player")

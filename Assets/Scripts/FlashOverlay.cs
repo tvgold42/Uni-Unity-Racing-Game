@@ -7,7 +7,6 @@ public class FlashOverlay : MonoBehaviour
     public Animator overlayAnim;
     public float endTime = 15;
 
-    // Start is called before the first frame update
     void Start()
     {
         overlayAnim = GetComponent<Animator>();
@@ -18,7 +17,6 @@ public class FlashOverlay : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         endTime -= Time.deltaTime;

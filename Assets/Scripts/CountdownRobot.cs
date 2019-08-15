@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class CountdownRobot : MonoBehaviour
 {
+    //script for the countdown robots animation at the start of every race
     public Animator countdownAnim;
     public bool animationStart = false;
-    // Start is called before the first frame update
+    
     void Start()
     {
         countdownAnim = GetComponent<Animator>();
         
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         if (animationStart == false && RaceHandler.racePreview == false)

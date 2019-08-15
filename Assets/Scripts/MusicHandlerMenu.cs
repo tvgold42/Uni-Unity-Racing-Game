@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class MusicHandlerMenu : MonoBehaviour
 { 
     public AudioSource menuAudio;
-    // Start is called before the first frame update
+
     void Awake()
     {
         menuAudio = GetComponent<AudioSource>();
@@ -18,7 +18,7 @@ public class MusicHandlerMenu : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         //fade out music if about to start race

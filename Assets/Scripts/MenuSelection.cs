@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class MenuSelection : MonoBehaviour
 {
-    //use simple button1/2/3 names so this script can be used across multiple scenes
+    //uses simple button1/2/3 names so this script can be used across multiple scenes
     public Transform button1;
     public Transform button2;
     public Transform button3;
@@ -24,15 +24,13 @@ public class MenuSelection : MonoBehaviour
 
     public static float timeToProceed = 0;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         buttonAudio = GetComponent<AudioSource>();
         timeToProceed = 0;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if(selected == true) { timeToProceed += Time.deltaTime; }
@@ -71,7 +69,6 @@ public class MenuSelection : MonoBehaviour
             Debug.Log("entered");
             selected = true;
             buttonAudio.PlayOneShot(buttonSelect, 1f);
-          //  if (SceneManager.GetActiveScene().name != "TrackSelect") { Instantiate(fadeOut, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), transform.rotation); }
 
             //if selecting track and not back button
             if (SceneManager.GetActiveScene().name == "TrackSelect" && activeButton != maxButton) { Instantiate(flash, new Vector3(transform.position.x, transform.position.y + 2, transform.position.z), transform.rotation);
@@ -85,6 +82,7 @@ public class MenuSelection : MonoBehaviour
             else
             Instantiate(fadeOut, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), transform.rotation);
         }
+
         //press b on controller to go back
         if ((Input.GetKeyDown(KeyCode.Return) || Input.GetButton("Fire2")) && selected == false && SceneManager.GetActiveScene().name != "Title")
         {
@@ -116,21 +114,6 @@ public class MenuSelection : MonoBehaviour
                 { Application.Quit();
                     Debug.Log("Game Quit");
                 }
-            }
-            if (SceneManager.GetActiveScene().name == "VehicleSelect")
-            {
-                if (activeButton == 1)
-                {
-                    SceneManager.LoadScene("TrackSelect");
-                    Player.selectedVehicle = 1;
-                }
-                if (activeButton == 2)
-                {
-                    SceneManager.LoadScene("TrackSelect");
-                    Player.selectedVehicle = 2;
-                }
-                if (activeButton == 3)
-                { SceneManager.LoadScene("MainMenu"); }
             }
             if (SceneManager.GetActiveScene().name == "TrackSelect")
             {

@@ -9,7 +9,6 @@ TagManager:
   - Vehicle
   - Hud
   - PreviewHud
-  - Vehicle Fodder
   - HealthPickup
   - BoostPickup
   - KillGrid

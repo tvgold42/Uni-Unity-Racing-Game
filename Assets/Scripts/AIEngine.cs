@@ -11,7 +11,6 @@ public class AIEngine : MonoBehaviour
     public  Rigidbody AIRB;
     public WheelCollider AIWheel;
     public WheelCollider AIWheel2;
-    public SpriteRenderer AIRender;
     public BoxCollider AICol;
     public float maxSteerAngle = 40f;
     public float topSpeed = 500;
@@ -67,7 +66,7 @@ public class AIEngine : MonoBehaviour
     public float deaths;
 
 
-    // Start is called before the first frame update
+
     void Start()
     {
         AIPos = GetComponent<Transform>();
@@ -77,8 +76,6 @@ public class AIEngine : MonoBehaviour
         oldSteerAngle = maxSteerAngle;
         currentHealth = 10;
         maxHealth = currentHealth;
-        //fodder enemies have 1 hp
-        if (gameObject.tag == "Vehicle Fodder") { currentHealth = 1; maxHealth = 1; }
         boostCoolDown = Random.Range(0.5f, 1.5f);
         backupAccel = accel;
         topSpeedBackup = topSpeed;
@@ -122,7 +119,7 @@ public class AIEngine : MonoBehaviour
             collideBoostTimer -= Time.deltaTime;
         }
 
-        //sprite size increase
+        //model size increase
         if (AIPos.localScale.x <= initialSize)
         {
             AIPos.localScale = new Vector3(initialSize, initialSize, initialSize);
@@ -149,8 +146,6 @@ public class AIEngine : MonoBehaviour
             respawnTimer = 3;
             AIRB.velocity = Vector3.zero;
             Instantiate(explosionEffect, new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Quaternion.Euler(90, 0, 0));
-            //replace sprite renderer with mesh renderer in future
-            AIRender.enabled = false;
             //if close enough to player, play explosion sound for this vehicle
             if (Vector3.Distance(transform.position, playerPos.position) <= 18f)
             {
@@ -181,7 +176,6 @@ public class AIEngine : MonoBehaviour
             AICol.enabled = true;
             AIWheel.enabled = true;
             AIWheel2.enabled = true;
-            AIRender.enabled = true;
             respawnInvuln = 3;
             currentHealth = maxHealth;
         }
@@ -189,13 +183,6 @@ public class AIEngine : MonoBehaviour
         if (respawnInvuln >= 0)
         {
             respawnInvuln -= Time.deltaTime;
-            //flash for invuln
-            if (respawnInvuln >= 2 && respawnInvuln <= 2.5) { AIRender.enabled = false; }
-            if (respawnInvuln <= 2 && respawnInvuln >= 1.5) { AIRender.enabled = true; }
-            if (respawnInvuln <= 1.5 && respawnInvuln >= 1) { AIRender.enabled = false; }
-            if (respawnInvuln <= 1 && respawnInvuln >= 0.5) { AIRender.enabled = true; }
-            if (respawnInvuln <= 0.5 && respawnInvuln >= 0.2) { AIRender.enabled = false; }
-            if (respawnInvuln <= 0.1) { AIRender.enabled = true; }
         }
 
         //speed caps
@@ -261,14 +248,14 @@ public class AIEngine : MonoBehaviour
                 playerPos.gameObject.GetComponent<Player>().playerSound.PlayOneShot(playerPos.gameObject.GetComponent<Player>().engineBoost, 1f);
             }
         }
-        if (boostCoolDown <= -3 + Random.Range(-3,1) && boosting == true && gameObject.tag != "Vehicle Fodder")
+        if (boostCoolDown <= -3 + Random.Range(-3,1) && boosting == true)
         {
             boostCoolDown = Random.Range(5,15);
             boosting = false;
             
         }
         //reset speed values after boosting ends
-        if (boosting == false && accel != backupAccel && gameObject.tag != "Vehicle Fodder")
+        if (boosting == false && accel != backupAccel)
         {
             accel = backupAccel;
             topSpeed = topSpeedBackup;
@@ -366,7 +353,6 @@ public class AIEngine : MonoBehaviour
     {
             //find distance from ai to next node
             Vector3 relativeAngle = transform.InverseTransformPoint(pathNodes[currentPathNode].position);
-            //convert relative distance to be a range of -1 to 1
 
             newSteerAngle = (relativeAngle.x / relativeAngle.magnitude) * maxSteerAngle;
             transform.eulerAngles = new Vector3(90, transform.rotation.y, angle);
@@ -427,7 +413,7 @@ public class AIEngine : MonoBehaviour
         //colliding with other vehicle
         if (currentLap != 4)
         {
-            if ((other.gameObject.tag == "Vehicle" || other.gameObject.tag == "Vehicle Fodder") && collideBoostTimer <= 0)
+            if (other.gameObject.tag == "Vehicle"  && collideBoostTimer <= 0)
             {
                 other.gameObject.GetComponent<AIEngine>().AIRB.velocity += new Vector3(xVelocity * 1.25f * Random.Range(0.85f, 1.25f), 0, zVelocity * 1.25f * Random.Range(0.85f, 1.25f));
                 collideBoostTimer = 0.7f;
@@ -442,12 +428,6 @@ public class AIEngine : MonoBehaviour
                     other.gameObject.GetComponent<AIEngine>().ratings += ratings / 4;
                     other.gameObject.GetComponent<AIEngine>().kills += 1;
                     ratings /= 2;
-                }
-                //fodder enemy
-                if (gameObject.tag == "Vehicle Fodder")
-                {
-                    other.gameObject.GetComponent<AIEngine>().ratings += 75;
-                    other.gameObject.GetComponent<AIEngine>().kills += 1;
                 }
 
             }
@@ -466,8 +446,6 @@ public class AIEngine : MonoBehaviour
                     other.gameObject.GetComponent<Player>().kills += 1;
                     ratings /= 2;
                 }
-                //fodder enemy
-                if (gameObject.tag == "Vehicle Fodder") { other.gameObject.GetComponent<Player>().ratings += 75; }
 
             }
         }
